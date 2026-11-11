@@ -26,7 +26,7 @@
 
     var src = host.getAttribute('data-src') || base + 'index.html';
     // honnan jött a látogató – később statisztikához használható
-    src += (src.indexOf('?') < 0 ? '?' : '&') + 'ref=' + encodeURIComponent(location.hostname);
+    src += (src.indexOf('?') < 0 ? '?' : '&') + 'embed=1&ref=' + encodeURIComponent(location.hostname);
 
     var frame = document.createElement('iframe');
     frame.src = src;

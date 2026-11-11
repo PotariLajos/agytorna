@@ -13,7 +13,10 @@ window.AP15 = window.AP15 || {};
 (function () {
   var root;
   var state;
-  var embedded = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
+  // Csak az embed.js által létrehozott iframe-ben (…?embed=1) váltunk beágyazott módra
+  var embedded = /[?&]embed=1\b/.test(location.search) &&
+    (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
+  var exitArmed = 0;
 
   /** Beágyazott módban (iframe) üzenet a befogadó oldalnak – lásd embed.js */
   function tellParent(type, data) {
@@ -108,7 +111,27 @@ window.AP15 = window.AP15 || {};
     return AP15.config.certificatePrefix + '-' + y + m + d + '-' + rnd.slice(0, 4) + '-' + rnd.slice(4);
   }
 
+  /* Claude-artifact környezetben a böngészős letöltés tiltott; ott a
+     platform mentési funkcióját használjuk. Normál weboldalon sima letöltés. */
+  var downloadsCap = null;
+  function getDownloads() {
+    if (!window.claude || typeof window.claude.use !== 'function') return Promise.resolve(null);
+    if (!downloadsCap) downloadsCap = Promise.resolve(window.claude.use('downloads')).catch(function () { return null; });
+    return downloadsCap;
+  }
+
   function downloadBlob(blob, filename) {
+    getDownloads().then(function (d) {
+      if (!d) return plainDownload(blob, filename);
+      d.save({ filename: filename, data: blob }).catch(function (err) {
+        if (err && err.code === 'declined') return;
+        if (err && err.code === 'rate_limited') { toast('Már nyitva van egy mentési ablak.', 2400); return; }
+        toast('A mentés ebben a nézetben nem érhető el.', 2800);
+      });
+    });
+  }
+
+  function plainDownload(blob, filename) {
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
@@ -652,7 +675,13 @@ window.AP15 = window.AP15 || {};
 
     switch (a) {
       case 'home':
-        if (state.screen === 'quiz' && !confirm('Biztosan kilépsz? A teszt eddigi válaszai elvesznek.')) return;
+        // megerősítés az oldalon belül (a confirm() nem mindenhol működik)
+        if (state.screen === 'quiz' && Date.now() - exitArmed > 4000) {
+          exitArmed = Date.now();
+          toast('Kilépsz? A válaszaid elvesznek. Kattints <b>újra a logóra</b> a kilépéshez.', 3500);
+          return;
+        }
+        exitArmed = 0;
         state = freshState(); renderLanding(); break;
       case 'start': startQuiz(); break;
       case 'next': nextQuestion(); break;
@@ -668,7 +697,10 @@ window.AP15 = window.AP15 || {};
           title: 'Agytorna',
           text: state.result.score + '/15 pont – ' + state.result.level.title + '! Mennyire vág az eszed? Próbáld ki te is!',
           files: [new File([state.shareBlob], 'agytorna-eredmeny.png', { type: 'image/png' })]
-        }).catch(function () {});
+        }).catch(function (err) {
+          if (err && err.name === 'AbortError') return;
+          downloadBlob(state.shareBlob, 'agytorna-eredmeny-' + slug(state.cert.name) + '.png');
+        });
         break;
       case 'send-email': sendEmail(el); break;
       case 'privacy':
@@ -718,6 +750,7 @@ window.AP15 = window.AP15 || {};
     }
     state = freshState();
     root.addEventListener('click', onClick);
+    getDownloads(); // előre lekérjük, hogy a gombnyomás után ne kelljen várni
     document.addEventListener('keydown', onKey);
     window.addEventListener('beforeunload', function (e) {
       if (state.screen === 'quiz' && state.answers.length) { e.preventDefault(); e.returnValue = ''; }
