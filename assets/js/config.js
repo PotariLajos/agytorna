@@ -11,9 +11,11 @@ AP15.config = Object.assign(
   {
     brand: 'Agytorna',
 
-    // Skool közösség – HELYKITÖLTŐ, élesítés előtt cserélendő!
-    skoolUrl: 'https://www.skool.com/IDE-JON-A-KOZOSSEG-LINKJE',
-    skoolUrlIsPlaceholder: true,
+    // Skool közösség – ajánlói (affiliate) link
+    skoolUrl: 'https://www.skool.com/szabaduszo-affiliate/about?ref=47fda19cfe6e4a4cbdfea472011ceff2',
+    skoolUrlIsPlaceholder: false,
+    // Ajánlói link jelzése a gomb alatt (üres szöveg = nem jelenik meg)
+    skoolDisclosure: 'Ajánlói link: csatlakozás esetén jutalékot kaphatok, neked ez nem kerül többe.',
 
     // Háttérrendszer az oklevél e-mailes küldéséhez és a hozzájárulás naplózásához.
     // Amíg enabled:false, SEMMILYEN adat nem hagyja el a böngészőt (demó mód).

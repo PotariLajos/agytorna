@@ -59,7 +59,7 @@ címkét kapnak (Erős terület / Biztos alap / Fejleszthető terület / Felfede
 | Megosztható eredménykártya (PNG letöltés; mobilon natív megosztás) | ✅ működik |
 | Oklevélkérés + marketing-hozzájárulás **külön** naplózása időbélyeggel | 🟡 **DEMÓ**: csak a böngésző localStorage-ában („Demó adatnapló” panel) |
 | Oklevél küldése e-mail-mellékletként | 🟡 **DEMÓ**: e-mail-előnézet jelenik meg, valódi küldés nincs |
-| Skool-link | 🟡 **HELYKITÖLTŐ** – `config.js` → `skoolUrl` |
+| Skool-link | ✅ beállítva (ajánlói link, jelzéssel) – `config.js` → `skoolUrl`, `skoolDisclosure` |
 | Adatkezelési tájékoztató | 🟡 **HELYKITÖLTŐ** – `config.js` → `privacyUrl` |
 
 Demó módban **semmilyen adat nem hagyja el a böngészőt.**

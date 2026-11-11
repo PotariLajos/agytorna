@@ -125,13 +125,15 @@ AP15.buildFeedback = function (result) {
   parts.push('Fontos: kategóriánként csak három kérdés volt, ezért ezek az eredmények tájékoztató jellegűek, nem végleges ítéletek.');
 
   // Javaslatok: a leggyengébb terület(ek)re, max. 3 db
-  var tipSource = weak.length && best !== worst ? weak : entries.slice().sort(function (a, b) { return a.c - b.c; }).slice(0, 2);
   var tips = [];
-  tipSource.forEach(function (e) {
-    AP15.tips[e.key].forEach(function (t) {
-      tips.push({ cat: e.key, text: t });
+  if (best !== worst) {
+    weak.forEach(function (e) {
+      AP15.tips[e.key].forEach(function (t) { tips.push({ cat: e.key, text: t }); });
     });
-  });
+  } else {
+    // minden terület egyforma: egy-egy javaslat több különböző területről
+    entries.forEach(function (e) { tips.push({ cat: e.key, text: AP15.tips[e.key][0] }); });
+  }
   if (result.score >= 13) {
     tips = [{ cat: null, text: 'Keress összetettebb kihívásokat: programozási feladványokat, stratégiai játékokat vagy versenyfeladatokat.' }].concat(tips);
   }

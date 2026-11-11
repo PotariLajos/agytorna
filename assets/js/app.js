@@ -608,7 +608,8 @@ window.AP15 = window.AP15 || {};
           '<h2>Szeretnél tovább fejlődni?</h2>' +
           '<p>Fedezd fel a digitális világ, az AI és az online tanulás lehetőségeit egy támogató közösségben!</p>' +
           '<a class="ap15-btn ap15-btn--cta" href="' + esc(AP15.config.skoolUrl) + '" target="_blank" rel="noopener noreferrer" data-action="skool">MEGNÉZEM A SKOOL KÖZÖSSÉGET <span aria-hidden="true">↗</span></a>' +
-          (AP15.config.skoolUrlIsPlaceholder ? '<p class="ap15-skool-note"><span class="ap15-tag">helykitöltő link</span> A végleges Skool-cím a config.js fájlban állítható be.</p>' : '') +
+          (AP15.config.skoolUrlIsPlaceholder ? '<p class="ap15-skool-note"><span class="ap15-tag">helykitöltő link</span> A végleges Skool-cím a config.js fájlban állítható be.</p>' :
+            (AP15.config.skoolDisclosure ? '<p class="ap15-skool-note">' + esc(AP15.config.skoolDisclosure) + '</p>' : '')) +
         '</aside>' +
 
         demoLogPanel() +
