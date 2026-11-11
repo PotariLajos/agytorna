@@ -31,6 +31,7 @@ Majd: <http://localhost:8000>. (Közvetlenül fájlként – `file://` – is me
 | `assets/css/style.css` | Teljes dizájn, `.ap15` alá szűkítve (WordPress-témákkal nem ütközik) |
 | `api/send-certificate.php` | **Kikapcsolt** szerveroldali sablon: e-mail PDF-melléklettel + naplózás |
 | `agytorna.php` | WordPress-bővítményváz: `[agytorna]` shortcode |
+| `embed.js` | Beágyazó kód bármely más oldalhoz (iframe, automatikus magasság) |
 
 ## A teszt felépítése
 
@@ -72,6 +73,23 @@ Demó módban **semmilyen adat nem hagyja el a böngészőt.**
    Éles használatra SMTP/tranzakciós levelezőszolgáltatás ajánlott; a hozzájárulásokat később
    hírlevélrendszerbe (double opt-in) érdemes továbbítani.
 3. Javasolt még: rate limit / CAPTCHA a végponton, adatmegőrzési idő, leiratkozási lehetőség.
+
+## Beágyazás más oldalakba (domainek, aldomainek)
+
+Ajánlott felállás: az Agytorna **egy központi helyen** fut (pl. `agytorna.oldalad.hu` vagy `oldalad.hu/agytorna/`),
+a többi oldal pedig csak beágyazza. Így egy helyen frissül, és minden oklevélkérés és hozzájárulás egy helyre fut be.
+
+Bármely oldalra (WordPress „Egyéni HTML” blokk, Elementor HTML widget, sima HTML):
+
+```html
+<div data-agytorna></div>
+<script src="https://agytorna.oldalad.hu/embed.js" async></script>
+```
+
+- Az iframe magassága automatikusan igazodik, képernyőváltáskor az oldal a teszt tetejére görget.
+- Ragadós fejlécnél: `<div data-agytorna data-offset="80"></div>`.
+- A beágyazó oldal neve `?ref=` paraméterként átmegy (később statisztikához).
+- A PDF-letöltés, az eredménykártya és a mobilos megosztás beágyazva is működik.
 
 ## WordPress
 

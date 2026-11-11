@@ -390,6 +390,14 @@ li.bad .ap15-rv-mark { color: var(--bad); }
 
 .ap15-confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 60; }
 
+/* ================= BEÁGYAZOTT MÓD (iframe) =================
+   Itt a magasságot a tartalom adja (az embed.js állítja az iframe-et),
+   ezért nem használhatunk viewport-alapú minimum magasságot. */
+.ap15--embed { min-height: 0; }
+.ap15--embed .ap15-calc { min-height: 420px; }
+.ap15--embed .ap15-toast { position: absolute; bottom: auto; top: 76px; }
+html.ap15-embedded, html.ap15-embedded body { overflow: hidden; }
+
 /* ================= RESZPONZÍV ================= */
 @media (max-width: 860px) {
   .ap15-grid2 { grid-template-columns: 1fr; }

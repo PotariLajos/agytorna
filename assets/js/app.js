@@ -13,6 +13,13 @@ window.AP15 = window.AP15 || {};
 (function () {
   var root;
   var state;
+  var embedded = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
+
+  /** Beágyazott módban (iframe) üzenet a befogadó oldalnak – lásd embed.js */
+  function tellParent(type, data) {
+    if (!embedded) return;
+    try { window.parent.postMessage(Object.assign({ source: 'agytorna', type: type }, data || {}), '*'); } catch (e) {}
+  }
 
   var ROUNDS = {
     1: { label: '1. kör', name: 'Bemelegítés' },
@@ -70,7 +77,9 @@ window.AP15 = window.AP15 || {};
     root.innerHTML = '<div class="ap15-bg" aria-hidden="true"><i></i><i></i><i></i></div>' +
       header() + '<main class="ap15-screen ap15-screen--' + state.screen + '">' + html + '</main>' +
       '<footer class="ap15-footer">Agytorna · saját fejlesztésű, játékos képességfelmérő – nem hiteles IQ-mérés.</footer>';
-    if (!opts.keepScroll) {
+    if (!opts.keepScroll && embedded) {
+      tellParent('top');
+    } else if (!opts.keepScroll) {
       var top = root.getBoundingClientRect().top + window.pageYOffset;
       window.scrollTo({ top: Math.max(0, top - 0), behavior: 'auto' });
     }
@@ -696,6 +705,17 @@ window.AP15 = window.AP15 || {};
   AP15.mount = function (el) {
     root = el;
     root.classList.add('ap15');
+    if (embedded) {
+      root.classList.add('ap15--embed');
+      document.documentElement.classList.add('ap15-embedded');
+      var lastH = 0;
+      var report = function () {
+        var h = Math.ceil(root.getBoundingClientRect().height);
+        if (h !== lastH) { lastH = h; tellParent('height', { height: h }); }
+      };
+      if (window.ResizeObserver) new ResizeObserver(report).observe(root);
+      setInterval(report, 1000); // tartalék régi böngészőkhöz
+    }
     state = freshState();
     root.addEventListener('click', onClick);
     document.addEventListener('keydown', onKey);
@@ -714,7 +734,9 @@ window.AP15 = window.AP15 || {};
     host.appendChild(cv);
     var ctx = cv.getContext('2d');
     var dpr = Math.min(2, window.devicePixelRatio || 1);
-    var W = cv.width = window.innerWidth * dpr, H = cv.height = window.innerHeight * dpr;
+    var viewH = embedded ? Math.min(window.innerHeight, 900) : window.innerHeight;
+    if (embedded) { cv.style.position = 'absolute'; cv.style.height = viewH + 'px'; }
+    var W = cv.width = window.innerWidth * dpr, H = cv.height = viewH * dpr;
     var colors = ['#8b5cf6', '#22d3ee', '#f5b942', '#f472b6', '#34d399', '#ffffff'];
     var parts = [];
     for (var i = 0; i < (count || 140); i++) {
