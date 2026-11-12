@@ -24,17 +24,13 @@ window.AP15 = window.AP15 || {};
     try { window.parent.postMessage(Object.assign({ source: 'agytorna', type: type }, data || {}), '*'); } catch (e) {}
   }
 
-  var ROUNDS = {
-    1: { label: '1. kör', name: 'Bemelegítés' },
-    2: { label: '2. kör', name: 'Belejövünk' },
-    3: { label: '3. kör', name: 'A nagy kihívás' }
-  };
   var LETTERS = ['A', 'B', 'C', 'D'];
 
   function freshState() {
     return {
       screen: 'landing',
       index: 0,
+      questions: [],
       answers: [],
       selected: null,
       locked: false,
@@ -163,13 +159,9 @@ window.AP15 = window.AP15 || {};
 
   function renderLanding() {
     state.screen = 'landing';
-    var feats = [
-      ['🧠', '15 izgalmas kérdés'],
-      ['⏱️', '5–7 perc'],
-      ['💎', 'Teljesen ingyenes'],
-      ['⚡', 'Azonnali eredmény'],
-      ['📜', 'Digitális oklevél']
-    ];
+    var L = AP15.pack.landing;
+    var feats = L.features;
+    var n = AP15.pack.slots.length;
     var cats = Object.keys(AP15.categories).map(function (k) {
       var c = AP15.categories[k];
       return '<li style="--c:' + c.color + '"><span>' + c.icon + '</span>' + esc(c.name) + '</li>';
@@ -178,9 +170,9 @@ window.AP15 = window.AP15 || {};
     show(
       '<section class="ap15-hero">' +
         '<div class="ap15-hero-badge"><span class="ap15-dot"></span> Ingyenes gondolkodási kihívás · regisztráció nélkül</div>' +
-        '<h1 class="ap15-title" tabindex="-1" data-autofocus>Mennyire <span class="ap15-grad">vág az eszed?</span></h1>' +
-        '<p class="ap15-subtitle">15 kérdés. Néhány perc. Egy izgalmas kihívás!</p>' +
-        '<p class="ap15-lead">Tedd próbára a logikai érzékedet, a mintafelismerést és a problémamegoldó képességedet! Derítsd ki, hogyan teljesítesz!</p>' +
+        '<h1 class="ap15-title" tabindex="-1" data-autofocus>' + esc(L.titleLead) + ' <span class="ap15-grad">' + esc(L.titleAccent) + '</span></h1>' +
+        '<p class="ap15-subtitle">' + esc(L.subtitle) + '</p>' +
+        '<p class="ap15-lead">' + esc(L.lead) + '</p>' +
         '<ul class="ap15-features">' + feats.map(function (f, i) {
           return '<li style="--i:' + i + '"><span class="ap15-feat-ico">' + f[0] + '</span>' + f[1] + '</li>';
         }).join('') + '</ul>' +
@@ -191,7 +183,7 @@ window.AP15 = window.AP15 || {};
         '<h2>Mit mér a kihívás?</h2>' +
         '<ul class="ap15-cat-list">' + cats + '</ul>' +
         '<ol class="ap15-steps">' +
-          '<li><b>1</b><span>Válaszolj 15 kérdésre, három egyre nehezebb körben.</span></li>' +
+          '<li><b>1</b><span>Válaszolj ' + n + ' kérdésre, három egyre nehezebb körben. Újrakezdéskor új kérdéseket kapsz!</span></li>' +
           '<li><b>2</b><span>Nézd meg a részletes, ingyenes eredményedet.</span></li>' +
           '<li><b>3</b><span>Töltsd le a személyre szóló digitális oklevelet.</span></li>' +
         '</ol>' +
@@ -203,21 +195,49 @@ window.AP15 = window.AP15 || {};
 
   function startQuiz() {
     state = freshState();
+    var draw = AP15.drawQuestions();
+    state.questions = draw.questions;
     state.screen = 'quiz';
     state.startedAt = Date.now();
     renderQuestion();
+    startTimer();
+    if (draw.reshuffled) toast('🌟 <b>Minden kérdést láttál már!</b> Mostantól újra keverjük őket.', 3200);
+  }
+
+  /* --- óra a teszt alatt (csak tájékoztató, a pontszámba nem számít) --- */
+  var timerId = null;
+  function timerHidden() {
+    try { return localStorage.getItem('ap15_timer_hidden') === '1'; } catch (e) { return false; }
+  }
+  function clock(ms) {
+    var s = Math.max(0, Math.floor(ms / 1000));
+    return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+  }
+  function updateTimer() {
+    var el = root.querySelector('[data-timer]');
+    if (el && state.startedAt) el.textContent = clock(Date.now() - state.startedAt);
+  }
+  function startTimer() { stopTimer(); timerId = setInterval(updateTimer, 1000); }
+  function stopTimer() { if (timerId) clearInterval(timerId); timerId = null; }
+  function toggleTimer(btn) {
+    var hide = !btn.classList.contains('is-hidden');
+    try { localStorage.setItem('ap15_timer_hidden', hide ? '1' : '0'); } catch (e) {}
+    btn.classList.toggle('is-hidden', hide);
+    btn.setAttribute('aria-pressed', String(!hide));
+    btn.title = hide ? 'Idő mutatása' : 'Idő elrejtése';
   }
 
   function renderQuestion(opts) {
     state.screen = 'quiz';
     var i = state.index;
-    var q = AP15.questions[i];
-    var total = AP15.questions.length;
+    var q = state.questions[i];
+    var total = state.questions.length;
     var cat = AP15.categories[q.category];
-    var round = ROUNDS[q.level];
+    var round = AP15.pack.rounds[q.level];
+    var tHidden = timerHidden();
     var isLast = i === total - 1;
 
-    var segs = AP15.questions.map(function (_, j) {
+    var segs = state.questions.map(function (_, j) {
       return '<span class="' + (j < i ? 'is-done' : j === i ? 'is-current' : '') + '"></span>';
     }).join('');
 
@@ -234,6 +254,8 @@ window.AP15 = window.AP15 || {};
         '<div class="ap15-progress" aria-live="polite">' +
           '<div class="ap15-progress-top">' +
             '<span class="ap15-progress-count"><b>' + (i + 1) + '</b>/' + total + '</span>' +
+            '<button type="button" class="ap15-timer' + (tHidden ? ' is-hidden' : '') + '" data-action="toggle-timer" aria-pressed="' + !tHidden + '" title="' + (tHidden ? 'Idő mutatása' : 'Idő elrejtése') + '">' +
+              '<span aria-hidden="true">⏱</span> <span data-timer>' + clock(Date.now() - state.startedAt) + '</span></button>' +
             '<span class="ap15-round">' + round.label + ' · ' + round.name + '</span>' +
           '</div>' +
           '<div class="ap15-segs" aria-hidden="true">' + segs + '</div>' +
@@ -282,7 +304,7 @@ window.AP15 = window.AP15 || {};
       state.index++;
       state.selected = null;
       state.locked = false;
-      if (state.index >= AP15.questions.length) {
+      if (state.index >= state.questions.length) {
         finishQuiz();
         return;
       }
@@ -296,7 +318,8 @@ window.AP15 = window.AP15 || {};
 
   function finishQuiz() {
     state.finishedAt = Date.now();
-    state.result = AP15.computeResult(state.answers);
+    stopTimer();
+    state.result = AP15.computeResult(state.answers, state.questions);
     state.feedback = AP15.buildFeedback(state.result);
     state.screen = 'calculating';
     show(
@@ -557,7 +580,8 @@ window.AP15 = window.AP15 || {};
         title: 'Agytorna oklevél – ' + c.name, author: 'Agytorna'
       });
       return AP15.graphics.renderShareCard({
-        name: c.name, score: r.score, max: r.max, levelTitle: r.level.title, categories: r.categories
+        name: c.name, score: r.score, max: r.max, levelTitle: r.level.title, categories: r.categories,
+        time: formatDuration(state.finishedAt - state.startedAt)
       });
     }).then(function (cv) {
       state.sharePreview = cv.toDataURL('image/png');
@@ -686,6 +710,7 @@ window.AP15 = window.AP15 || {};
         state = freshState(); renderLanding(); break;
       case 'start': startQuiz(); break;
       case 'next': nextQuestion(); break;
+      case 'toggle-timer': toggleTimer(el); break;
       case 'to-form': renderForm(); break;
       case 'to-result': renderResult(); break;
       case 'restart': state = freshState(); startQuiz(); break;
@@ -696,7 +721,7 @@ window.AP15 = window.AP15 || {};
       case 'share':
         navigator.share({
           title: 'Agytorna',
-          text: state.result.score + '/15 pont – ' + state.result.level.title + '! Mennyire vág az eszed? Próbáld ki te is!',
+          text: state.result.score + '/' + state.result.max + ' pont – ' + state.result.level.title + '! Mennyire vág az eszed? Próbáld ki te is!',
           files: [new File([state.shareBlob], 'agytorna-eredmeny.png', { type: 'image/png' })]
         }).catch(function (err) {
           if (err && err.name === 'AbortError') return;
@@ -735,7 +760,10 @@ window.AP15 = window.AP15 || {};
     }
   }
 
-  AP15.mount = function (el) {
+  /** @param {HTMLElement} el  @param {{pack?: string}} [opts] */
+  AP15.mount = function (el, opts) {
+    opts = opts || {};
+    AP15.activatePack(opts.pack || AP15.config.pack);
     root = el;
     root.classList.add('ap15');
     if (embedded) {
@@ -758,6 +786,9 @@ window.AP15 = window.AP15 || {};
     });
     renderLanding();
   };
+
+  /** Az aktuális kitöltés kérdései (teszteléshez, hibakereséshez) */
+  AP15.currentQuestions = function () { return state.questions; };
 
   /* ---------------- konfetti ---------------- */
 

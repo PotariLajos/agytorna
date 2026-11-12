@@ -24,12 +24,16 @@
 
   <!-- Modulok: konfiguráció → adatok → logika → megjelenítés -->
   <script src="assets/js/config.js"></script>
-  <script src="assets/js/questions.js"></script>
-  <script src="assets/js/results.js"></script>
+  <script src="assets/js/engine.js"></script>
+  <script src="assets/js/packs/agytorna.js"></script>
   <script src="assets/js/storage.js"></script>
   <script src="assets/js/pdf.js"></script>
   <script src="assets/js/graphics.js"></script>
   <script src="assets/js/app.js"></script>
-  <script>AP15.mount(document.getElementById('agytorna'));</script>
+  <script>
+    // ?pack=<téma> paraméterrel másik témacsomag is indítható (ha be van töltve)
+    var ap15Pack = new URLSearchParams(location.search).get('pack') || undefined;
+    AP15.mount(document.getElementById('agytorna'), { pack: ap15Pack });
+  </script>
 </body>
 </html>

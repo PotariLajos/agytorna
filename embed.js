@@ -14,6 +14,7 @@
  * Opcionális attribútumok a <div>-en:
  *   data-offset="80"   – ragadós fejléc magassága px-ben (görgetéshez)
  *   data-src="..."     – egyedi cím (alapból az embed.js melletti index.html)
+ *   data-pack="..."    – témacsomag azonosítója (alapból a config.js-ben megadott)
  */
 (function () {
   var script = document.currentScript;
@@ -27,6 +28,8 @@
     var src = host.getAttribute('data-src') || base + 'index.html';
     // honnan jött a látogató – később statisztikához használható
     src += (src.indexOf('?') < 0 ? '?' : '&') + 'embed=1&ref=' + encodeURIComponent(location.hostname);
+    var pack = host.getAttribute('data-pack');
+    if (pack) src += '&pack=' + encodeURIComponent(pack);
 
     var frame = document.createElement('iframe');
     frame.src = src;

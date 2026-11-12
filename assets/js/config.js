@@ -11,6 +11,10 @@ AP15.config = Object.assign(
   {
     brand: 'Agytorna',
 
+    // Melyik témacsomag fusson (assets/js/packs/<id>.js). Beágyazásnál
+    // a data-pack attribútummal, oldalanként is felülírható.
+    pack: 'agytorna',
+
     // Skool közösség – ajánlói (affiliate) link
     skoolUrl: 'https://www.skool.com/szabaduszo-affiliate/about?ref=47fda19cfe6e4a4cbdfea472011ceff2',
     skoolUrlIsPlaceholder: false,

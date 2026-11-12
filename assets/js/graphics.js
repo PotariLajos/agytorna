@@ -317,7 +317,6 @@ AP15.graphics = (function () {
 
   /* ---------------- EREDMÉNYKÁRTYA ---------------- */
 
-  var SHORT = { logic: 'Logika', pattern: 'Minták', problem: 'Probléma', verbal: 'Verbális', attention: 'Figyelem' };
 
   /**
    * @param {{name:string,score:number,max:number,levelTitle:string,categories:object}} d
@@ -413,6 +412,13 @@ AP15.graphics = (function () {
       ctx.fillStyle = goldGradient(ctx, W / 2 - tw / 2, 0, W / 2 + tw / 2, 0);
       ctx.fillText(lvl, W / 2, 970);
 
+      // kitöltési idő
+      if (d.time) {
+        ctx.fillStyle = 'rgba(255,255,255,.6)';
+        ctx.font = '500 30px ' + SANS;
+        ctx.fillText('⏱ ' + d.time, W / 2, 1052);
+      }
+
       // kategóriák
       var keys = Object.keys(d.categories);
       var colW = (W - 160) / keys.length;
@@ -422,18 +428,18 @@ AP15.graphics = (function () {
         var col = AP15.categories[k].color;
         for (var j = 0; j < c.total; j++) {
           ctx.beginPath();
-          ctx.arc(x - 30 + j * 30, 1095, 10, 0, Math.PI * 2);
+          ctx.arc(x - 30 + j * 30, 1118, 10, 0, Math.PI * 2);
           ctx.fillStyle = j < c.correct ? col : 'rgba(255,255,255,.15)';
           ctx.fill();
         }
         ctx.fillStyle = 'rgba(255,255,255,.75)';
         ctx.font = '500 27px ' + SANS;
-        ctx.fillText(SHORT[k] || k, x, 1148);
+        ctx.fillText(AP15.categories[k].short || AP15.categories[k].name, x, 1168);
       });
 
       ctx.fillStyle = 'rgba(255,255,255,.85)';
       ctx.font = '600 34px ' + SANS;
-      ctx.fillText('Mennyire vág az eszed? Próbáld ki te is!', W / 2, 1245);
+      ctx.fillText(AP15.pack.landing.titleLead + ' ' + AP15.pack.landing.titleAccent + ' Próbáld ki te is!', W / 2, 1255);
 
       return cv;
     });

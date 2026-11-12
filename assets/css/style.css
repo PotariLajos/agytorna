@@ -161,6 +161,14 @@
 .ap15-progress-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; gap: 10px; }
 .ap15-progress-count { font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .ap15-progress-count b { font-size: 26px; color: var(--text); font-weight: 800; }
+.ap15-timer {
+  display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--muted);
+  background: rgba(255, 255, 255, .06); border: 1px solid var(--line); transition: opacity .2s, background .2s;
+}
+.ap15-timer:hover { background: rgba(255, 255, 255, .1); color: var(--text); }
+.ap15-timer.is-hidden { opacity: .55; }
+.ap15-timer.is-hidden [data-timer] { display: none; }
 .ap15-round { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--gold-l); }
 .ap15-segs { display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; }
 .ap15-segs span { height: 7px; border-radius: 4px; background: rgba(255, 255, 255, .1); transition: background .4s; }

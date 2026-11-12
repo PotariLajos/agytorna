@@ -22,8 +22,8 @@ Majd: <http://localhost:8000>. (Közvetlenül fájlként – `file://` – is me
 |---|---|
 | `index.html` | Önálló oldal, csak egy `<div id="agytorna">` + a modulok betöltése |
 | `assets/js/config.js` | **Beállítások**: Skool-link, háttérrendszer ki/be, hozzájárulási szöveg és verzió |
-| `assets/js/questions.js` | **Kérdésbank és megoldókulcs** (5 kategória × 3 kérdés, indoklással) |
-| `assets/js/results.js` | **Pontozás és eredményszövegek** (szintek, kategóriasávok, javaslatok) |
+| `assets/js/engine.js` | Motor: témacsomagok, kérdéshúzás, válaszkeverés, pontozás, értékelés |
+| `assets/js/packs/agytorna.js` | **Témacsomag**: 90 kérdés megoldókulccsal és indoklással, kategóriák, szintek, szövegek |
 | `assets/js/storage.js` | Naplózás (demó: localStorage) és a háttérrendszer hívása |
 | `assets/js/pdf.js` | Függőség nélküli PDF-író (JPEG → A4 fekvő PDF) |
 | `assets/js/graphics.js` | Oklevél és eredménykártya rajzolása (canvas) |
@@ -43,12 +43,24 @@ Három kör, egyre nehezedő kérdésekkel; minden körben mind az öt kategóri
 | 2. Belejövünk | magassági sorrend | növekvő különbségek | 20%-os árcsökkentés | analógia | kódösszevetés |
 | 3. Nagy kihívás | igazmondók/hazugok | n²+1 szabály | csiga a kútban | összetett szó | ütő és labda |
 
-A megoldókulcs (`correct`) és az indoklás (`explain`) a `questions.js`-ben van; az eredményoldalon a kitöltő
+A megoldókulcs (`correct`) és az indoklás (`explain`) a `packs/agytorna.js`-ben van; az eredményoldalon a kitöltő
 minden kérdésnél láthatja a helyes választ és a magyarázatot.
 
 Pontozás: helyes válasz = 1 pont, max. 15. Szintek: 0–5 Kíváncsi felfedező · 6–9 Gondolkodó felfedező ·
 10–12 Ügyes problémamegoldó · 13–15 Logikai kihívásmester. A 3 kérdéses részterületek óvatos, tájékoztató
 címkét kapnak (Erős terület / Biztos alap / Fejleszthető terület / Felfedezésre vár).
+
+## Variációk és új témák
+
+- A teszt 15 **kérdéshelyből** áll (5 kategória × 3 nehézségi szint), helyenként **6 egyenértékű kérdéssel**.
+  Minden kitöltés helyenként egyet húz, és a válaszok sorrendjét is összekeveri.
+- Ugyanabban a böngészőben a látogató 6 kitöltésen át nem kap ismétlődő kérdést; utána a kérdések
+  újrakeverednek („Minden kérdést láttál már!” üzenettel).
+- A nehézség és a pontozás minden kitöltésnél azonos, így az eredmények összevethetők.
+- **Új téma** (pl. AI-tudás): másold le a `packs/agytorna.js`-t új néven, írd át az `id`-t és a tartalmat,
+  töltsd be az oldalon, és indítsd így: `?pack=<id>`, beágyazásnál `data-pack="<id>"`, WordPressben `[agytorna tema="<id>"]`.
+- Teszt közben egy elrejthető óra mutatja az eltelt időt (a pontszámba nem számít); a kitöltési idő
+  az eredményoldalon és a megosztható kártyán is megjelenik.
 
 ## Mi működik valóban, és mi demó?
 
