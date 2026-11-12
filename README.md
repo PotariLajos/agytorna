@@ -62,6 +62,21 @@ címkét kapnak (Erős terület / Biztos alap / Fejleszthető terület / Felfede
 - Teszt közben egy elrejthető óra mutatja az eltelt időt (a pontszámba nem számít); a kitöltési idő
   az eredményoldalon és a megosztható kártyán is megjelenik.
 
+## Tartalomfrissítés
+
+Minden témacsomagban van egy `review` mező: `lastReviewed` (utolsó átnézés dátuma) és `intervalMonths`
+(hány havonta esedékes). Állapot lekérdezése: `node tools/review-status.js`.
+
+| Téma | Átnézés |
+|---|---|
+| AI | havonta |
+| Webes/digitális, online biztonság | negyedévente (3) |
+| Szabadúszás, sport | félévente (6) |
+| Gondolkodás, általános műveltség | évente (12) |
+
+Átnézéskor: elavult vagy kétértelmű kérdések cseréje (az `id`-t új kérdésnél újra kell adni),
+a `lastReviewed` dátum frissítése. Havi emlékeztető jelez, ha valamelyik téma esedékes.
+
 ## Mi működik valóban, és mi demó?
 
 | Funkció | Állapot |

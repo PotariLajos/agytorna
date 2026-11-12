@@ -20,6 +20,11 @@ AP15.registerPack({
   id: 'agytorna',
   title: 'Agytorna',
 
+  // Tartalomfrissítés: mikor néztük át utoljára, és hány havonta esedékes.
+  // A gondolkodási feladatok nem évülnek el – évente átnézés, igény szerint bővítés.
+  // (Az ellenőrzéshez: node tools/review-status.js)
+  review: { lastReviewed: '2026-11-12', intervalMonths: 12 },
+
   landing: {
     titleLead: 'Mennyire',
     titleAccent: 'vág az eszed?',
