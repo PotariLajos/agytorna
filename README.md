@@ -10,7 +10,6 @@ Teljes folyamat: **Landing → 15 kérdés → Eredmény → Oklevéladatok → 
 Statikus oldal, build lépés nélkül. Bármilyen webszerverrel futtatható:
 
 ```bash
-cd agytorna
 php -S localhost:8000        # vagy: python3 -m http.server 8000
 ```
 
@@ -128,6 +127,6 @@ Bármely oldalra (WordPress „Egyéni HTML” blokk, Elementor HTML widget, sim
 
 ## WordPress
 
-A mappa egyben bővítményként is telepíthető (`wp-content/plugins/agytorna`), majd bármely oldalra:
+A tároló egyben bővítményként is telepíthető (`wp-content/plugins/agytorna`), majd bármely oldalra:
 `[agytorna]`. A beállítások `window.AP15_CONFIG`-on keresztül kerülnek át (Skool-link: `ap15_skool_url` opció).
 Következő lépés: admin beállítóoldal, REST végpont `wp_mail()`-lel, és a naplók saját adatbázistáblában.
