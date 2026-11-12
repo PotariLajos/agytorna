@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 }
 
 add_shortcode('agytorna', function ($atts = []) {
-    $atts = shortcode_atts(['tema' => 'agytorna'], $atts, 'agytorna');
+    $atts = shortcode_atts(['tema' => ''], $atts, 'agytorna'); // üres = témaválasztó
     $base = plugin_dir_url(__FILE__) . 'assets/';
     $ver  = '0.1.0';
 
@@ -23,7 +23,7 @@ add_shortcode('agytorna', function ($atts = []) {
     wp_enqueue_style('ap15', $base . 'css/style.css', ['ap15-fonts'], $ver);
 
     $deps = [];
-    foreach (['config', 'engine', 'packs/agytorna', 'storage', 'pdf', 'graphics', 'app'] as $mod) {
+    foreach (['config', 'engine', 'packs/agytorna', 'packs/ai', 'packs/szabaduszo', 'storage', 'pdf', 'graphics', 'app'] as $mod) {
         wp_enqueue_script('ap15-' . $mod, $base . 'js/' . $mod . '.js', $deps, $ver, true);
         $deps = ['ap15-' . $mod];
     }
@@ -38,5 +38,5 @@ add_shortcode('agytorna', function ($atts = []) {
     wp_add_inline_script('ap15-config', 'window.AP15_CONFIG = ' . wp_json_encode($config) . ';', 'before');
     wp_add_inline_script('ap15-app', 'document.querySelectorAll(".ap15-mount").forEach(function(el){AP15.mount(el,{pack:el.getAttribute("data-pack")||undefined});});');
 
-    return '<div class="ap15-mount" data-pack="' . esc_attr($atts['tema']) . '"></div>';
+    return '<div class="ap15-mount"' . ($atts['tema'] ? ' data-pack="' . esc_attr($atts['tema']) . '"' : '') . '></div>';
 });

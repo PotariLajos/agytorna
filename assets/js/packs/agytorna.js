@@ -18,7 +18,13 @@
  */
 AP15.registerPack({
   id: 'agytorna',
-  title: 'Agytorna',
+  title: 'Gondolkodási próba',
+  icon: '🧠',
+  cardDesc: 'A klasszikus kihívás: logika, mintafelismerés, problémamegoldás, szókincs és figyelem.',
+  certPhrase: 'az Agytorna interaktív gondolkodási kihívást',
+  cardLabel: 'AZ ÉN EREDMÉNYEM',
+  certCongrats: 'Gratulálunk! Kitartásod és éles eszed bizonyította: a gondolkodás kalandja csak most kezdődik.',
+  disclaimer: 'Saját fejlesztésű, játékos képességfelmérő – nem minősül hiteles IQ-mérésnek.',
 
   // Tartalomfrissítés: mikor néztük át utoljára, és hány havonta esedékes.
   // A gondolkodási feladatok nem évülnek el – évente átnézés, igény szerint bővítés.

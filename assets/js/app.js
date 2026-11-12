@@ -17,6 +17,12 @@ window.AP15 = window.AP15 || {};
   var embedded = /[?&]embed=1\b/.test(location.search) &&
     (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
   var exitArmed = 0;
+  var forcedPack = null; // ha a téma rögzítve van (?pack= / data-pack), nincs témaválasztó
+
+  function pickerPacks() {
+    if (forcedPack) return [];
+    return (AP15.config.packs || []).filter(function (id) { return AP15.packs[id]; });
+  }
 
   /** Beágyazott módban (iframe) üzenet a befogadó oldalnak – lásd embed.js */
   function tellParent(type, data) {
@@ -75,7 +81,7 @@ window.AP15 = window.AP15 || {};
     opts = opts || {};
     root.innerHTML = '<div class="ap15-bg" aria-hidden="true"><i></i><i></i><i></i></div>' +
       header() + '<main class="ap15-screen ap15-screen--' + state.screen + '">' + html + '</main>' +
-      '<footer class="ap15-footer">Agytorna · saját fejlesztésű, játékos képességfelmérő – nem hiteles IQ-mérés.</footer>';
+      '<footer class="ap15-footer">' + esc(AP15.config.brand) + ' · ' + esc(AP15.pack.disclaimer || '') + '</footer>';
     if (!opts.keepScroll && embedded) {
       tellParent('top');
     } else if (!opts.keepScroll) {
@@ -159,6 +165,8 @@ window.AP15 = window.AP15 || {};
 
   function renderLanding() {
     state.screen = 'landing';
+    var list = pickerPacks();
+    if (list.length > 1) { renderPicker(list); return; }
     var L = AP15.pack.landing;
     var feats = L.features;
     var n = AP15.pack.slots.length;
@@ -184,6 +192,54 @@ window.AP15 = window.AP15 || {};
         '<ul class="ap15-cat-list">' + cats + '</ul>' +
         '<ol class="ap15-steps">' +
           '<li><b>1</b><span>Válaszolj ' + n + ' kérdésre, három egyre nehezebb körben. Újrakezdéskor új kérdéseket kapsz!</span></li>' +
+          '<li><b>2</b><span>Nézd meg a részletes, ingyenes eredményedet.</span></li>' +
+          '<li><b>3</b><span>Töltsd le a személyre szóló digitális oklevelet.</span></li>' +
+        '</ol>' +
+      '</section>'
+    );
+  }
+
+  /* ---------------- 1/B. TÉMAVÁLASZTÓ ---------------- */
+
+  function renderPicker(list) {
+    // a nyitóoldal a fő (alapértelmezett) csomag szövegeit használja
+    var main = AP15.packs[AP15.config.pack] || AP15.packs[list[0]];
+    AP15.activatePack(main.id);
+    var L = main.landing;
+
+    var cards = list.map(function (id, i) {
+      var p = AP15.packs[id];
+      var cats = Object.keys(p.categories).map(function (k) {
+        return '<li>' + p.categories[k].icon + ' ' + esc(p.categories[k].short || p.categories[k].name) + '</li>';
+      }).join('');
+      var first = p.categories[Object.keys(p.categories)[0]].color;
+      return '<article class="ap15-pack-card" style="--c:' + first + ';--i:' + i + '">' +
+        '<div class="ap15-pack-head"><span class="ap15-pack-ico" aria-hidden="true">' + p.icon + '</span>' +
+        '<h3>' + esc(p.title) + '</h3></div>' +
+        '<p>' + esc(p.cardDesc) + '</p>' +
+        '<ul class="ap15-pack-cats" aria-label="Témakörök">' + cats + '</ul>' +
+        '<button class="ap15-btn ap15-btn--cta ap15-btn--block" data-action="start" data-pack="' + esc(id) + '">INDÍTOM A TESZTET <span aria-hidden="true">→</span></button>' +
+      '</article>';
+    }).join('');
+
+    show(
+      '<section class="ap15-hero ap15-hero--picker">' +
+        '<div class="ap15-hero-badge"><span class="ap15-dot"></span> Ingyenes kihívások · regisztráció nélkül</div>' +
+        '<h1 class="ap15-title" tabindex="-1" data-autofocus>' + esc(L.titleLead) + ' <span class="ap15-grad">' + esc(L.titleAccent) + '</span></h1>' +
+        '<p class="ap15-subtitle">' + esc(L.subtitle) + '</p>' +
+        '<p class="ap15-lead">Válaszd ki, miben mérnéd össze magad: gondolkodás, mesterséges intelligencia vagy szabadúszás. Derítsd ki, hogyan teljesítesz!</p>' +
+        '<ul class="ap15-features">' + L.features.map(function (f, i) {
+          return '<li style="--i:' + i + '"><span class="ap15-feat-ico">' + f[0] + '</span>' + f[1] + '</li>';
+        }).join('') + '</ul>' +
+      '</section>' +
+      '<section class="ap15-picker" aria-labelledby="ap15-picker-h">' +
+        '<h2 id="ap15-picker-h">Válassz kihívást!</h2>' +
+        '<div class="ap15-pack-grid">' + cards + '</div>' +
+        '<p class="ap15-fineprint">Nem kell regisztrálni. Minden kihívás saját fejlesztésű, játékos felmérés – nem hivatalos vizsga vagy IQ-mérés.</p>' +
+      '</section>' +
+      '<section class="ap15-how">' +
+        '<ol class="ap15-steps">' +
+          '<li><b>1</b><span>Válassz témát, és válaszolj 15 kérdésre, három egyre nehezebb körben.</span></li>' +
           '<li><b>2</b><span>Nézd meg a részletes, ingyenes eredményedet.</span></li>' +
           '<li><b>3</b><span>Töltsd le a személyre szóló digitális oklevelet.</span></li>' +
         '</ol>' +
@@ -406,7 +462,8 @@ window.AP15 = window.AP15 || {};
         '<details class="ap15-card ap15-review"><summary><span>Válaszaid áttekintése és a megoldások</span><span class="ap15-review-count">' + r.score + ' helyes / ' + (r.max - r.score) + ' hibás</span></summary>' +
           '<ol class="ap15-review-list">' + review + '</ol></details>' +
 
-        '<p class="ap15-center"><button class="ap15-link" data-action="restart">↻ Újrakezdem a tesztet</button></p>' +
+        '<p class="ap15-center"><button class="ap15-link" data-action="restart">↻ Újrakezdem a tesztet (új kérdésekkel)</button>' +
+          (pickerPacks().length > 1 ? ' · <button class="ap15-link" data-action="home">Másik kihívást választok</button>' : '') + '</p>' +
       '</section>'
     );
     animateResult();
@@ -540,6 +597,7 @@ window.AP15 = window.AP15 || {};
     AP15.store.logCertificate({
       certId: state.cert.id,
       issuedAt: state.cert.issuedAt,
+      pack: AP15.pack.id,
       name: name,
       nameMode: state.cert.nameMode,
       email: email,
@@ -572,7 +630,8 @@ window.AP15 = window.AP15 || {};
   function buildAssets() {
     var r = state.result, c = state.cert;
     return AP15.graphics.renderCertificate({
-      name: c.name, score: r.score, max: r.max, levelTitle: r.level.title, date: c.date, certId: c.id
+      name: c.name, score: r.score, max: r.max, levelTitle: r.level.title, date: c.date, certId: c.id,
+      certPhrase: AP15.pack.certPhrase, disclaimer: AP15.pack.disclaimer, congrats: AP15.pack.certCongrats
     }).then(function (cv) {
       state.certPreview = cv.toDataURL('image/jpeg', 0.85);
       state.pdfBlob = AP15.pdf.fromCanvas(cv, {
@@ -662,7 +721,7 @@ window.AP15 = window.AP15 || {};
     var c = state.cert, r = state.result;
     btn.disabled = true;
     var payload = {
-      certId: c.id, issuedAt: c.issuedAt, name: c.name, nameMode: c.nameMode, email: c.email,
+      certId: c.id, issuedAt: c.issuedAt, pack: AP15.pack.id, name: c.name, nameMode: c.nameMode, email: c.email,
       score: r.score, max: r.max, level: r.level.title,
       marketingConsent: c.marketing,
       consentText: c.marketing ? AP15.config.consentText : null,
@@ -708,7 +767,10 @@ window.AP15 = window.AP15 || {};
         }
         exitArmed = 0;
         state = freshState(); renderLanding(); break;
-      case 'start': startQuiz(); break;
+      case 'start':
+        if (el.getAttribute('data-pack')) AP15.activatePack(el.getAttribute('data-pack'));
+        startQuiz();
+        break;
       case 'next': nextQuestion(); break;
       case 'toggle-timer': toggleTimer(el); break;
       case 'to-form': renderForm(); break;
@@ -763,7 +825,8 @@ window.AP15 = window.AP15 || {};
   /** @param {HTMLElement} el  @param {{pack?: string}} [opts] */
   AP15.mount = function (el, opts) {
     opts = opts || {};
-    AP15.activatePack(opts.pack || AP15.config.pack);
+    forcedPack = opts.pack && AP15.packs[opts.pack] ? opts.pack : null;
+    AP15.activatePack(forcedPack || AP15.config.pack);
     root = el;
     root.classList.add('ap15');
     if (embedded) {

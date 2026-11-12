@@ -226,7 +226,8 @@ AP15.graphics = (function () {
 
       ctx.fillStyle = C.muted;
       ctx.font = '400 44px ' + SANS;
-      ctx.fillText('részére, aki sikeresen teljesítette az Agytorna interaktív gondolkodási kihívást.', W / 2, 1050);
+      fitFont(ctx, 'részére, aki sikeresen teljesítette ' + d.certPhrase + '.', 1900, 44, '400 {s}px ' + SANS);
+      ctx.fillText('részére, aki sikeresen teljesítette ' + d.certPhrase + '.', W / 2, 1050);
 
       // eredménysor
       var colL = W / 2 - 480, colR = W / 2 + 480;
@@ -246,7 +247,7 @@ AP15.graphics = (function () {
 
       // gratuláció
       ctx.fillStyle = '#5b4d80';
-      var congrats = 'Gratulálunk! Kitartásod és éles eszed bizonyította: a gondolkodás kalandja csak most kezdődik.';
+      var congrats = d.congrats || 'Gratulálunk! Sikeresen teljesítetted a kihívást.';
       fitFont(ctx, congrats, 1900, 42, 'italic 400 {s}px ' + SERIF);
       ctx.fillText(congrats, W / 2, 1360);
 
@@ -269,7 +270,8 @@ AP15.graphics = (function () {
 
       ctx.fillStyle = 'rgba(111,103,136,.85)';
       ctx.font = '400 24px ' + SANS;
-      ctx.fillText('Saját fejlesztésű, játékos képességfelmérő – nem minősül hiteles IQ-mérésnek.', W / 2, 1630);
+      fitFont(ctx, d.disclaimer, 1500, 24, '400 {s}px ' + SANS);
+      ctx.fillText(d.disclaimer, W / 2, 1630);
 
       return cv;
     });
@@ -371,7 +373,7 @@ AP15.graphics = (function () {
 
       ctx.fillStyle = '#67e8f9';
       ctx.font = '600 28px ' + SANS;
-      spacedText(ctx, 'AZ ÉN EREDMÉNYEM', W / 2, 270, 8, 'center');
+      spacedText(ctx, AP15.pack.cardLabel || 'AZ ÉN EREDMÉNYEM', W / 2, 270, 8, 'center');
 
       // pontgyűrű
       var cx = W / 2, cy = 525, R = 190;

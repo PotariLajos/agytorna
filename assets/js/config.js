@@ -14,6 +14,10 @@ AP15.config = Object.assign(
     // Melyik témacsomag fusson (assets/js/packs/<id>.js). Beágyazásnál
     // a data-pack attribútummal, oldalanként is felülírható.
     pack: 'agytorna',
+    // A nyitóoldali témaválasztó sorrendje (csak a betöltött csomagok jelennek meg).
+    // Ha csak egy téma van betöltve, vagy a téma rögzítve van (?pack= / data-pack),
+    // nincs témaválasztó.
+    packs: ['agytorna', 'ai', 'szabaduszo'],
 
     // Skool közösség – ajánlói (affiliate) link
     skoolUrl: 'https://www.skool.com/szabaduszo-affiliate/about?ref=47fda19cfe6e4a4cbdfea472011ceff2',

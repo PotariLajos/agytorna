@@ -23,7 +23,9 @@ Majd: <http://localhost:8000>. (Közvetlenül fájlként – `file://` – is me
 | `index.html` | Önálló oldal, csak egy `<div id="agytorna">` + a modulok betöltése |
 | `assets/js/config.js` | **Beállítások**: Skool-link, háttérrendszer ki/be, hozzájárulási szöveg és verzió |
 | `assets/js/engine.js` | Motor: témacsomagok, kérdéshúzás, válaszkeverés, pontozás, értékelés |
-| `assets/js/packs/agytorna.js` | **Témacsomag**: 90 kérdés megoldókulccsal és indoklással, kategóriák, szintek, szövegek |
+| `assets/js/packs/agytorna.js` | **Gondolkodási próba**: 90 kérdés megoldókulccsal és indoklással, kategóriák, szintek, szövegek |
+| `assets/js/packs/ai.js` | **AI-próba**: 45 kérdés (havonta átnézendő) |
+| `assets/js/packs/szabaduszo.js` | **Szabadúszó-próba**: 45 kérdés (félévente átnézendő) |
 | `assets/js/storage.js` | Naplózás (demó: localStorage) és a háttérrendszer hívása |
 | `assets/js/pdf.js` | Függőség nélküli PDF-író (JPEG → A4 fekvő PDF) |
 | `assets/js/graphics.js` | Oklevél és eredménykártya rajzolása (canvas) |
@@ -49,6 +51,12 @@ minden kérdésnél láthatja a helyes választ és a magyarázatot.
 Pontozás: helyes válasz = 1 pont, max. 15. Szintek: 0–5 Kíváncsi felfedező · 6–9 Gondolkodó felfedező ·
 10–12 Ügyes problémamegoldó · 13–15 Logikai kihívásmester. A 3 kérdéses részterületek óvatos, tájékoztató
 címkét kapnak (Erős terület / Biztos alap / Fejleszthető terület / Felfedezésre vár).
+
+## Témaválasztó
+
+Ha több témacsomag van betöltve, a nyitóoldalon témakártyák jelennek meg (sorrend: `config.js` → `packs`).
+Egy konkrét téma közvetlenül is indítható: `?pack=ai`, beágyazásnál `data-pack="ai"`, WordPressben
+`[agytorna tema="ai"]` – ilyenkor nincs témaválasztó.
 
 ## Variációk és új témák
 
