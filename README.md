@@ -127,7 +127,7 @@ Bármely oldalra (WordPress „Egyéni HTML” blokk, Elementor HTML widget, sim
 
 ## WordPress
 
-A tároló egyben **éles WordPress-bővítmény (1.0.0)**: `wp-content/plugins/agytorna` (a zipből a `.git`, `tools/`, `api/` elhagyható), majd bármely oldalra `[agytorna]`.
+A tároló egyben **éles WordPress-bővítmény (1.1.0)**: `wp-content/plugins/agytorna` (a zipből a `.git`, `tools/`, `api/` elhagyható), majd bármely oldalra `[agytorna]`.
 
 WordPressben a bővítmény automatikusan élesre kapcsol (nincs DEMÓ):
 
@@ -136,6 +136,8 @@ WordPressben a bővítmény automatikusan élesre kapcsol (nincs DEMÓ):
 - **Névtelen kitöltésszámláló:** REST `agytorna/v1/stat` → napi összesítés témánként (kezdés, befejezés, átlagpont), IP és süti nélkül.
 - **Admin: Eszközök → Agytorna** – Skool-link, feladó e-mail és név, értesítési cím (új oklevélkérésről), kitöltésszámok, oklevél- és hozzájárulás-lista CSV-exporttal.
 - **Adatvédelem:** a betűk helyben (`assets/css/fonts.css`, `assets/fonts/`, SIL Open Font License – Outfit, Playfair Display), nincs Google Fonts; a WP emoji-szkript kikapcsolva (`ap15_disable_emoji` szűrő). Az adatkezelési link a WP adatvédelmi oldalára mutat (Beállítások → Adatvédelem).
+- **Megosztási előnézet:** OG- és Twitter-címkék a kezdőlapon és a `[agytorna]` oldalakon (cím, leírás, 1200×630 kép – mintakép: `assets/og-image.png`); Eszközök → Agytorna alatt átírható. SEO-bővítmény (Yoast/Rank Math) esetén nem dupláz.
+- **Látogatásszámláló:** a megnyitások is számolódnak (névtelenül), az admin „tölcsér” táblázata: megnyitotta → elkezdte → befejezte → oklevelet kért.
 - **Felület:** Skool „Következő lépés” az eredményoldalon (kompakt) és az oklevél alatt; lábléc: adatkezelési link + „Készítette” (`config.js` → `credit`).
 
 Kézbesítéshez a feladó legyen létező postafiók a domainen, vagy használj SMTP-bővítményt.

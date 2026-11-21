@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Agytorna – Interaktív gondolkodási kihívás
  * Description: 15 kérdéses, játékos gondolkodási teszt eredményoldallal, PDF-oklevéllel (e-mailben is), megosztható eredménykártyával és Skool-ajánlattal. Használat: [agytorna] shortcode. Beállítások: Eszközök → Agytorna.
- * Version:     1.0.0
+ * Version:     1.1.0
  * Requires PHP: 7.4
  * Text Domain: agytorna
  */
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('AP15_VERSION', '1.0.0');
+define('AP15_VERSION', '1.1.0');
 define('AP15_DB_VERSION', '1');
 define('AP15_DEFAULT_SKOOL', 'https://www.skool.com/szabaduszo-affiliate/about?ref=47fda19cfe6e4a4cbdfea472011ceff2');
 define('AP15_CERT_RETENTION_MONTHS', 24); // oklevél-rekordok megőrzése (hitelesség-ellenőrzéshez)
@@ -120,6 +120,64 @@ add_action('init', function () {
 });
 
 /* ------------------------------------------------------------------ *
+ * Megosztási előnézet (Facebook / Messenger / LinkedIn / X)
+ * ------------------------------------------------------------------ */
+
+add_action('init', function () {
+    // show_in_rest: a /wp/v2/settings végponton is állítható (adminból)
+    register_setting('ap15', 'ap15_og_image', ['type' => 'string', 'sanitize_callback' => 'esc_url_raw', 'show_in_rest' => true, 'default' => '']);
+    register_setting('ap15', 'ap15_og_title', ['type' => 'string', 'sanitize_callback' => 'sanitize_text_field', 'show_in_rest' => true, 'default' => '']);
+    register_setting('ap15', 'ap15_og_desc', ['type' => 'string', 'sanitize_callback' => 'sanitize_textarea_field', 'show_in_rest' => true, 'default' => '']);
+});
+
+function ap15_og_defaults() {
+    return [
+        'title' => get_bloginfo('name') . ' – Mennyire vág az eszed?',
+        'desc'  => 'Ingyenes, 15 kérdéses gondolkodási kihívás: logika, minták, problémamegoldás. Néhány perc, regisztráció nélkül – a végén személyre szóló PDF-oklevéllel.',
+    ];
+}
+
+add_action('wp_head', function () {
+    if (is_admin() || is_404()) {
+        return;
+    }
+    $post = get_queried_object();
+    $hasShortcode = $post instanceof WP_Post && has_shortcode((string) $post->post_content, 'agytorna');
+    if (!is_front_page() && !$hasShortcode) {
+        return;
+    }
+    // Ha SEO-bővítmény (Yoast / Rank Math) már ír OG-címkéket, nem duplázunk.
+    if (defined('WPSEO_VERSION') || class_exists('RankMath')) {
+        return;
+    }
+    $d     = ap15_og_defaults();
+    $title = get_option('ap15_og_title') ?: $d['title'];
+    $desc  = get_option('ap15_og_desc') ?: $d['desc'];
+    $img   = get_option('ap15_og_image');
+    $url   = is_front_page() ? home_url('/') : get_permalink($post);
+    echo "\n<!-- Agytorna: megosztási előnézet -->\n";
+    echo '<meta name="description" content="' . esc_attr($desc) . "\">\n";
+    echo '<meta property="og:type" content="website">' . "\n";
+    echo '<meta property="og:locale" content="hu_HU">' . "\n";
+    echo '<meta property="og:site_name" content="' . esc_attr(get_bloginfo('name')) . "\">\n";
+    echo '<meta property="og:title" content="' . esc_attr($title) . "\">\n";
+    echo '<meta property="og:description" content="' . esc_attr($desc) . "\">\n";
+    echo '<meta property="og:url" content="' . esc_url($url) . "\">\n";
+    if ($img) {
+        echo '<meta property="og:image" content="' . esc_url($img) . "\">\n";
+        echo '<meta property="og:image:width" content="1200">' . "\n";
+        echo '<meta property="og:image:height" content="630">' . "\n";
+        echo '<meta property="og:image:alt" content="' . esc_attr($title) . "\">\n";
+    }
+    echo '<meta name="twitter:card" content="' . ($img ? 'summary_large_image' : 'summary') . "\">\n";
+    echo '<meta name="twitter:title" content="' . esc_attr($title) . "\">\n";
+    echo '<meta name="twitter:description" content="' . esc_attr($desc) . "\">\n";
+    if ($img) {
+        echo '<meta name="twitter:image" content="' . esc_url($img) . "\">\n";
+    }
+}, 5);
+
+/* ------------------------------------------------------------------ *
  * Shortcode + frontend
  * ------------------------------------------------------------------ */
 
@@ -178,7 +236,9 @@ function ap15_rest_stat(WP_REST_Request $req) {
     }
     $event = (string) ($in['event'] ?? '');
     $pack  = sanitize_key((string) ($in['pack'] ?? ''));
-    if (!in_array($event, ['start', 'finish'], true) || !in_array($pack, ['agytorna', 'ai', 'szabaduszo'], true)) {
+    if ($event === 'view') {
+        $pack = '_all'; // oldalmegnyitás: témától független
+    } elseif (!in_array($event, ['start', 'finish'], true) || !in_array($pack, ['agytorna', 'ai', 'szabaduszo'], true)) {
         return new WP_REST_Response(['ok' => false], 400);
     }
     $day   = current_time('Y-m-d');
@@ -187,7 +247,7 @@ function ap15_rest_stat(WP_REST_Request $req) {
         $stats = [];
     }
     $row = $stats[$day][$pack] ?? ['start' => 0, 'finish' => 0, 'scoreSum' => 0];
-    $row[$event]++;
+    $row[$event] = ($row[$event] ?? 0) + 1;
     if ($event === 'finish' && isset($in['score']) && is_numeric($in['score'])) {
         $row['scoreSum'] += max(0, min(50, (int) $in['score']));
     }
@@ -389,6 +449,13 @@ function ap15_admin_page() {
           <tr><th><label for="ap15_notify_email">Értesítés új oklevélkérésről</label></th>
               <td><input class="regular-text" id="ap15_notify_email" name="ap15_notify_email" type="email" value="<?php echo esc_attr(ap15_opt('ap15_notify_email')); ?>">
               <p class="description">Erre a címre jön levél, ha valaki megadja az adatait (név, e-mail, pontszám, hírlevél igen/nem).</p></td></tr>
+          <tr><th><label for="ap15_og_title">Megosztási cím (Facebook)</label></th>
+              <td><input class="large-text" id="ap15_og_title" name="ap15_og_title" type="text" value="<?php echo esc_attr(get_option('ap15_og_title')); ?>" placeholder="<?php echo esc_attr(ap15_og_defaults()['title']); ?>"></td></tr>
+          <tr><th><label for="ap15_og_desc">Megosztási leírás</label></th>
+              <td><textarea class="large-text" rows="2" id="ap15_og_desc" name="ap15_og_desc" placeholder="<?php echo esc_attr(ap15_og_defaults()['desc']); ?>"><?php echo esc_textarea(get_option('ap15_og_desc')); ?></textarea></td></tr>
+          <tr><th><label for="ap15_og_image">Megosztási kép URL (1200×630)</label></th>
+              <td><input class="large-text" id="ap15_og_image" name="ap15_og_image" type="url" value="<?php echo esc_attr(get_option('ap15_og_image')); ?>">
+              <p class="description">Médiatárba feltöltött kép címe. Módosítás után a Facebook Sharing Debuggerben kattints az „Újrakaparás” gombra.</p></td></tr>
         </table>
         <?php submit_button(); ?>
       </form>
@@ -401,13 +468,24 @@ function ap15_admin_page() {
       $tot    = [];
       foreach ($stats as $day => $packs) {
           foreach ($packs as $p => $r) {
-              $tot[$p]['start']    = ($tot[$p]['start'] ?? 0) + $r['start'];
-              $tot[$p]['finish']   = ($tot[$p]['finish'] ?? 0) + $r['finish'];
-              $tot[$p]['scoreSum'] = ($tot[$p]['scoreSum'] ?? 0) + $r['scoreSum'];
+              $tot[$p]['view']     = ($tot[$p]['view'] ?? 0) + ($r['view'] ?? 0);
+              $tot[$p]['start']    = ($tot[$p]['start'] ?? 0) + ($r['start'] ?? 0);
+              $tot[$p]['finish']   = ($tot[$p]['finish'] ?? 0) + ($r['finish'] ?? 0);
+              $tot[$p]['scoreSum'] = ($tot[$p]['scoreSum'] ?? 0) + ($r['scoreSum'] ?? 0);
           }
       }
+      $views   = (int) ($tot['_all']['view'] ?? 0);
+      $starts  = 0; $fins = 0;
+      foreach ($names as $p => $l) { $starts += (int) ($tot[$p]['start'] ?? 0); $fins += (int) ($tot[$p]['finish'] ?? 0); }
+      $pct = function ($a, $b) { return $b ? round($a / $b * 100) . '%' : '–'; };
       ?>
-      <h2>Kitöltések (névtelen számláló)</h2>
+      <h2>Látogatás és kitöltés (névtelen, süti nélkül)</h2>
+      <table class="widefat striped" style="max-width:720px"><thead><tr><th></th><th>Megnyitotta</th><th>Elkezdte</th><th>Befejezte</th><th>Oklevelet kért</th></tr></thead><tbody>
+        <tr><td><b>Összesen</b></td><td><b><?php echo $views; ?></b></td><td><b><?php echo $starts; ?></b> (<?php echo $pct($starts, $views); ?>)</td>
+            <td><b><?php echo $fins; ?></b> (<?php echo $pct($fins, $starts); ?>)</td><td><b><?php echo (int) $nCerts; ?></b> (<?php echo $pct($nCerts, $fins); ?>)</td></tr>
+      </tbody></table>
+      <p class="description">A százalék az előző lépéshez viszonyít. A megnyitást csak böngészőben futó oldal számolja (a robotok többsége kimarad); egy látogató újratöltése új megnyitásnak számít.</p>
+      <h3>Témánként</h3>
       <table class="widefat striped" style="max-width:720px"><thead><tr><th>Téma</th><th>Elkezdte</th><th>Befejezte</th><th>Befejezési arány</th><th>Átlagpont</th></tr></thead><tbody>
       <?php foreach ($names as $p => $label) : $r = $tot[$p] ?? ['start' => 0, 'finish' => 0, 'scoreSum' => 0]; ?>
         <tr><td><?php echo esc_html($label); ?></td><td><?php echo (int) $r['start']; ?></td><td><b><?php echo (int) $r['finish']; ?></b></td>
@@ -416,11 +494,11 @@ function ap15_admin_page() {
       <?php endforeach; ?>
       </tbody></table>
       <h3>Utolsó 14 nap</h3>
-      <table class="widefat striped" style="max-width:720px"><thead><tr><th>Nap</th><th>Elkezdte</th><th>Befejezte</th></tr></thead><tbody>
+      <table class="widefat striped" style="max-width:720px"><thead><tr><th>Nap</th><th>Megnyitotta</th><th>Elkezdte</th><th>Befejezte</th></tr></thead><tbody>
       <?php $i = 0; foreach ($stats as $day => $packs) : if ($i++ >= 14) break;
-          $s = 0; $f = 0; foreach ($packs as $r) { $s += $r['start']; $f += $r['finish']; } ?>
-        <tr><td><?php echo esc_html($day); ?></td><td><?php echo (int) $s; ?></td><td><?php echo (int) $f; ?></td></tr>
-      <?php endforeach; if (!$stats) echo '<tr><td colspan="3">Még nincs kitöltés.</td></tr>'; ?>
+          $v = 0; $s = 0; $f = 0; foreach ($packs as $r) { $v += $r['view'] ?? 0; $s += $r['start'] ?? 0; $f += $r['finish'] ?? 0; } ?>
+        <tr><td><?php echo esc_html($day); ?></td><td><?php echo (int) $v; ?></td><td><?php echo (int) $s; ?></td><td><?php echo (int) $f; ?></td></tr>
+      <?php endforeach; if (!$stats) echo '<tr><td colspan="4">Még nincs adat.</td></tr>'; ?>
       </tbody></table>
 
       <h2>Oklevélkérések (<?php echo (int) $nCerts; ?>) <a class="button" href="<?php echo esc_url($exp('certs')); ?>">CSV letöltése</a></h2>

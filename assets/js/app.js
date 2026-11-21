@@ -871,6 +871,7 @@ window.AP15 = window.AP15 || {};
     window.addEventListener('beforeunload', function (e) {
       if (state.screen === 'quiz' && state.answers.length) { e.preventDefault(); e.returnValue = ''; }
     });
+    AP15.store.stat('view', '_all'); // névtelen megnyitásszámláló (süti nélkül)
     renderLanding();
   };
 
