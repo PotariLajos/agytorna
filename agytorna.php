@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Agytorna – Interaktív gondolkodási kihívás
  * Description: 15 kérdéses, játékos gondolkodási teszt eredményoldallal, PDF-oklevéllel (e-mailben is), megosztható eredménykártyával és Skool-ajánlattal. Használat: [agytorna] shortcode. Beállítások: Eszközök → Agytorna.
- * Version:     1.1.0
+ * Version:     1.1.1
  * Requires PHP: 7.4
  * Text Domain: agytorna
  */
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('AP15_VERSION', '1.1.0');
+define('AP15_VERSION', '1.1.1');
 define('AP15_DB_VERSION', '1');
 define('AP15_DEFAULT_SKOOL', 'https://www.skool.com/szabaduszo-affiliate/about?ref=47fda19cfe6e4a4cbdfea472011ceff2');
 define('AP15_CERT_RETENTION_MONTHS', 24); // oklevél-rekordok megőrzése (hitelesség-ellenőrzéshez)
@@ -399,6 +399,14 @@ add_action('admin_init', function () {
     register_setting('ap15', 'ap15_from_name', ['type' => 'string', 'sanitize_callback' => 'sanitize_text_field']);
     register_setting('ap15', 'ap15_notify_email', ['type' => 'string', 'sanitize_callback' => 'sanitize_email']);
 
+    // Névtelen számláló nullázása (csak az ap15_stats; oklevél- és hozzájárulás-rekordok maradnak)
+    if (isset($_POST['ap15_reset_stats']) && current_user_can('manage_options')) {
+        check_admin_referer('ap15_reset_stats');
+        delete_option('ap15_stats');
+        wp_safe_redirect(admin_url('tools.php?page=agytorna&ap15_reset=1'));
+        exit;
+    }
+
     if (isset($_GET['page'], $_GET['ap15_export']) && $_GET['page'] === 'agytorna' && current_user_can('manage_options')) {
         check_admin_referer('ap15_export');
         global $wpdb;
@@ -485,6 +493,11 @@ function ap15_admin_page() {
             <td><b><?php echo $fins; ?></b> (<?php echo $pct($fins, $starts); ?>)</td><td><b><?php echo (int) $nCerts; ?></b> (<?php echo $pct($nCerts, $fins); ?>)</td></tr>
       </tbody></table>
       <p class="description">A százalék az előző lépéshez viszonyít. A megnyitást csak böngészőben futó oldal számolja (a robotok többsége kimarad); egy látogató újratöltése új megnyitásnak számít.</p>
+      <?php if (!empty($_GET['ap15_reset'])) echo '<div class="notice notice-success inline"><p>A számláló nullázva.</p></div>'; ?>
+      <form method="post" onsubmit="return confirm('Biztosan nullázod a látogatás- és kitöltésszámlálót? (Az oklevélkérések és a hozzájárulások megmaradnak.)');">
+        <?php wp_nonce_field('ap15_reset_stats'); ?>
+        <button type="submit" name="ap15_reset_stats" value="1" class="button">Számláló nullázása</button>
+      </form>
       <h3>Témánként</h3>
       <table class="widefat striped" style="max-width:720px"><thead><tr><th>Téma</th><th>Elkezdte</th><th>Befejezte</th><th>Befejezési arány</th><th>Átlagpont</th></tr></thead><tbody>
       <?php foreach ($names as $p => $label) : $r = $tot[$p] ?? ['start' => 0, 'finish' => 0, 'scoreSum' => 0]; ?>
