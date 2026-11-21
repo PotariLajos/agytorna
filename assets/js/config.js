@@ -38,6 +38,8 @@ AP15.config = Object.assign(
     consentVersion: '2026-11-v1',
 
     privacyUrl: '#adatkezeles', // helykitöltő
+    credit: { name: 'PO-Team', url: 'https://poteam.hu/' }, // lábléc: „Készítette” (null = nem jelenik meg)
+    statsEndpoint: '', // névtelen kitöltésszámláló végpontja (WordPressben a bővítmény tölti ki)
     certificatePrefix: 'AT15'
   },
   window.AP15_CONFIG || {}

@@ -26,7 +26,10 @@ AP15.store = (function () {
   }
 
   /** Oklevélkérés naplózása (a teljesítéshez szükséges adatok) */
+  function live() { return !!(AP15.config.backend && AP15.config.backend.enabled); }
+
   function logCertificate(rec) {
+    if (live()) return; // élesben a szerver naplóz, a böngészőben nem tárolunk személyes adatot
     var log = read();
     log.certificates.push(rec);
     write(log);
@@ -34,6 +37,7 @@ AP15.store = (function () {
 
   /** Marketing-hozzájárulás külön naplózása időbélyeggel */
   function logMarketingConsent(rec) {
+    if (live()) return;
     var log = read();
     log.marketingConsents.push(rec);
     write(log);
@@ -75,7 +79,22 @@ AP15.store = (function () {
     });
   }
 
+  /**
+   * Névtelen kitöltésszámláló (kezdés / befejezés témánként). Nem küld személyes
+   * adatot, sütit nem használ; csak összesített számlálót növel a szerveren.
+   */
+  function stat(event, pack, score) {
+    var url = AP15.config.statsEndpoint;
+    if (!url) return;
+    var body = JSON.stringify({ event: event, pack: pack, score: typeof score === 'number' ? score : null });
+    try {
+      if (navigator.sendBeacon && navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }))) return;
+    } catch (e) {}
+    try { fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true }); } catch (e) {}
+  }
+
   return {
+    stat: stat,
     read: read,
     logCertificate: logCertificate,
     logMarketingConsent: logMarketingConsent,

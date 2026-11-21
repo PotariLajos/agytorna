@@ -464,3 +464,12 @@ html.ap15-embedded, html.ap15-embedded body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .ap15 *, .ap15 *::before, .ap15 *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* Skool – kompakt változat az eredményoldalon + lábléc-link */
+.ap15-skool--compact { padding: 26px 22px; margin-top: 18px; }
+.ap15-skool--compact h2 { font-size: clamp(20px, 3.6vw, 26px); }
+.ap15-skool--compact p { margin-bottom: 16px; }
+.ap15-certpage .ap15-skool { margin: 22px 0; }
+.ap15-footer a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.ap15-footer a:hover { color: #e9e4ff; }
+.ap15-credit { display: inline-block; margin-top: 6px; font-size: 12px; opacity: .85; }

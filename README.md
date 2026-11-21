@@ -127,6 +127,15 @@ Bármely oldalra (WordPress „Egyéni HTML” blokk, Elementor HTML widget, sim
 
 ## WordPress
 
-A tároló egyben bővítményként is telepíthető (`wp-content/plugins/agytorna`), majd bármely oldalra:
-`[agytorna]`. A beállítások `window.AP15_CONFIG`-on keresztül kerülnek át (Skool-link: `ap15_skool_url` opció).
-Következő lépés: admin beállítóoldal, REST végpont `wp_mail()`-lel, és a naplók saját adatbázistáblában.
+A tároló egyben **éles WordPress-bővítmény (1.0.0)**: `wp-content/plugins/agytorna` (a zipből a `.git`, `tools/`, `api/` elhagyható), majd bármely oldalra `[agytorna]`.
+
+WordPressben a bővítmény automatikusan élesre kapcsol (nincs DEMÓ):
+
+- **Oklevél e-mailben:** REST `agytorna/v1/certificate` → `wp_mail()` PDF-melléklettel, validálás, 5 kérés/óra/IP korlát (csak hash-elt kulcs, 1 óráig). Az oklevél az elkészülte után automatikusan megy.
+- **Naplók külön táblában:** `{prefix}agytorna_certificates` (24 hónap után napi cron törli) és `{prefix}agytorna_consents` (marketing-hozzájárulás szöveggel, verzióval, időbélyeggel). WP adatexport/-törlés (Eszközök → Személyes adatok) támogatott.
+- **Névtelen kitöltésszámláló:** REST `agytorna/v1/stat` → napi összesítés témánként (kezdés, befejezés, átlagpont), IP és süti nélkül.
+- **Admin: Eszközök → Agytorna** – Skool-link, feladó e-mail és név, értesítési cím (új oklevélkérésről), kitöltésszámok, oklevél- és hozzájárulás-lista CSV-exporttal.
+- **Adatvédelem:** a betűk helyben (`assets/css/fonts.css`, `assets/fonts/`, SIL Open Font License – Outfit, Playfair Display), nincs Google Fonts; a WP emoji-szkript kikapcsolva (`ap15_disable_emoji` szűrő). Az adatkezelési link a WP adatvédelmi oldalára mutat (Beállítások → Adatvédelem).
+- **Felület:** Skool „Következő lépés” az eredményoldalon (kompakt) és az oklevél alatt; lábléc: adatkezelési link + „Készítette” (`config.js` → `credit`).
+
+Kézbesítéshez a feladó legyen létező postafiók a domainen, vagy használj SMTP-bővítményt.

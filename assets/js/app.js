@@ -70,6 +70,23 @@ window.AP15 = window.AP15 || {};
       '<text x="50" y="63" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="800" font-size="40" fill="#fff">15</text></svg>';
   }
 
+  function hasPrivacy() {
+    return !!AP15.config.privacyUrl && AP15.config.privacyUrl.charAt(0) !== '#';
+  }
+
+  /** Skool „Következő lépés” doboz – compact: az eredményoldalon, teljes: az oklevél alatt */
+  function skoolBox(compact) {
+    return '<aside class="ap15-skool' + (compact ? ' ap15-skool--compact' : '') + '">' +
+      '<div class="ap15-skool-glow" aria-hidden="true"></div>' +
+      '<span class="ap15-skool-kicker">Következő lépés' + (compact ? '' : ' – ha szeretnéd') + '</span>' +
+      '<h2>' + (compact ? 'Ügyes voltál! Fejlődj tovább a közösségben' : 'Szeretnél tovább fejlődni?') + '</h2>' +
+      '<p>Fedezd fel a digitális világ, az AI és az online tanulás lehetőségeit egy támogató közösségben!</p>' +
+      '<a class="ap15-btn ap15-btn--cta" href="' + esc(AP15.config.skoolUrl) + '" target="_blank" rel="noopener noreferrer" data-action="skool">MEGNÉZEM A SKOOL KÖZÖSSÉGET <span aria-hidden="true">↗</span></a>' +
+      (AP15.config.skoolUrlIsPlaceholder ? '<p class="ap15-skool-note"><span class="ap15-tag">helykitöltő link</span> A végleges Skool-cím a config.js fájlban állítható be.</p>' :
+        (AP15.config.skoolDisclosure ? '<p class="ap15-skool-note">' + esc(AP15.config.skoolDisclosure) + '</p>' : '')) +
+    '</aside>';
+  }
+
   function header() {
     return '<header class="ap15-header"><button class="ap15-brand" data-action="home" aria-label="Agytorna – kezdőlap">' +
       logoSvg(36) + '<span>Agy<b>torna</b></span></button>' +
@@ -81,7 +98,9 @@ window.AP15 = window.AP15 || {};
     opts = opts || {};
     root.innerHTML = '<div class="ap15-bg" aria-hidden="true"><i></i><i></i><i></i></div>' +
       header() + '<main class="ap15-screen ap15-screen--' + state.screen + '">' + html + '</main>' +
-      '<footer class="ap15-footer">' + esc(AP15.config.brand) + ' · ' + esc(AP15.pack.disclaimer || '') + '</footer>';
+      '<footer class="ap15-footer">' + esc(AP15.config.brand) + ' · ' + esc(AP15.pack.disclaimer || '') +
+        (hasPrivacy() ? ' · <a href="' + esc(AP15.config.privacyUrl) + '" target="_blank" rel="noopener">Adatkezelési tájékoztató</a>' : '') +
+        (AP15.config.credit ? '<br><span class="ap15-credit">Készítette: <a href="' + esc(AP15.config.credit.url) + '" target="_blank" rel="noopener">' + esc(AP15.config.credit.name) + '</a></span>' : '') + '</footer>';
     if (!opts.keepScroll && embedded) {
       tellParent('top');
     } else if (!opts.keepScroll) {
@@ -255,6 +274,7 @@ window.AP15 = window.AP15 || {};
     state.questions = draw.questions;
     state.screen = 'quiz';
     state.startedAt = Date.now();
+    AP15.store.stat('start', AP15.pack.id);
     renderQuestion();
     startTimer();
     if (draw.reshuffled) toast('🌟 <b>Minden kérdést láttál már!</b> Mostantól újra keverjük őket.', 3200);
@@ -377,6 +397,7 @@ window.AP15 = window.AP15 || {};
     stopTimer();
     state.result = AP15.computeResult(state.answers, state.questions);
     state.feedback = AP15.buildFeedback(state.result);
+    AP15.store.stat('finish', AP15.pack.id, state.result.score);
     state.screen = 'calculating';
     show(
       '<div class="ap15-calc" role="status">' +
@@ -459,6 +480,8 @@ window.AP15 = window.AP15 || {};
           '<button class="ap15-btn ap15-btn--cta" data-action="to-form">OKLEVELET KÉREK <span aria-hidden="true">→</span></button>' +
         '</div>' +
 
+        skoolBox(true) +
+
         '<details class="ap15-card ap15-review"><summary><span>Válaszaid áttekintése és a megoldások</span><span class="ap15-review-count">' + r.score + ' helyes / ' + (r.max - r.score) + ' hibás</span></summary>' +
           '<ol class="ap15-review-list">' + review + '</ol></details>' +
 
@@ -532,7 +555,8 @@ window.AP15 = window.AP15 || {};
               '<span class="ap15-check-text">' + esc(AP15.config.consentText) + ' <em>(Nem kötelező – az oklevelet enélkül is megkapod.)</em></span>' +
             '</label>' +
             '<p class="ap15-privacy">A nevet és az e-mail-címet kizárólag az oklevél elkészítéséhez és elküldéséhez használjuk. ' +
-              '<a href="' + esc(AP15.config.privacyUrl) + '" data-action="privacy">Adatkezelési tájékoztató</a> <span class="ap15-tag">helykitöltő</span></p>' +
+              '<a href="' + esc(AP15.config.privacyUrl) + '" data-action="privacy">Adatkezelési tájékoztató</a>' +
+              (hasPrivacy() ? '' : ' <span class="ap15-tag">helykitöltő</span>') + '</p>' +
             (AP15.config.backend.enabled ? '' :
               '<div class="ap15-demo-box"><b>DEMÓ MÓD:</b> nincs beállított háttérrendszer, ezért a megadott adatok nem kerülnek szerverre – csak ebben a böngészőben, bemutató célú naplóban tárolódnak.</div>') +
             '<button type="submit" class="ap15-btn ap15-btn--cta ap15-btn--block">OKLEVÉL ELKÉSZÍTÉSE <span aria-hidden="true">→</span></button>' +
@@ -673,6 +697,8 @@ window.AP15 = window.AP15 || {};
         '<p class="ap15-meta ap15-center">Azonosító: <b>' + esc(c.id) + '</b> · PDF, A4 fekvő · ' + kb + ' KB</p>' +
         '<div class="ap15-email-status" aria-live="polite"></div>' +
 
+        skoolBox(false) +
+
         '<div class="ap15-card ap15-share">' +
           '<div class="ap15-share-img"><img src="' + state.sharePreview + '" alt="Megosztható eredménykártya"></div>' +
           '<div class="ap15-share-body">' +
@@ -685,22 +711,17 @@ window.AP15 = window.AP15 || {};
           '</div>' +
         '</div>' +
 
-        '<aside class="ap15-skool">' +
-          '<div class="ap15-skool-glow" aria-hidden="true"></div>' +
-          '<span class="ap15-skool-kicker">Következő lépés – ha szeretnéd</span>' +
-          '<h2>Szeretnél tovább fejlődni?</h2>' +
-          '<p>Fedezd fel a digitális világ, az AI és az online tanulás lehetőségeit egy támogató közösségben!</p>' +
-          '<a class="ap15-btn ap15-btn--cta" href="' + esc(AP15.config.skoolUrl) + '" target="_blank" rel="noopener noreferrer" data-action="skool">MEGNÉZEM A SKOOL KÖZÖSSÉGET <span aria-hidden="true">↗</span></a>' +
-          (AP15.config.skoolUrlIsPlaceholder ? '<p class="ap15-skool-note"><span class="ap15-tag">helykitöltő link</span> A végleges Skool-cím a config.js fájlban állítható be.</p>' :
-            (AP15.config.skoolDisclosure ? '<p class="ap15-skool-note">' + esc(AP15.config.skoolDisclosure) + '</p>' : '')) +
-        '</aside>' +
-
         demoLogPanel() +
 
         '<p class="ap15-center"><button class="ap15-link" data-action="restart">↻ Új kitöltés</button></p>' +
       '</section>'
     );
     AP15.confetti(root, 70);
+    // Élesben az oklevél automatikusan megy e-mailben (a gomb újraküldésre marad)
+    if (AP15.config.backend.enabled && !c.mailed) {
+      var mailBtn = $('[data-action="send-email"]');
+      if (mailBtn) sendEmail(mailBtn);
+    }
   }
 
   function demoLogPanel() {
@@ -720,6 +741,7 @@ window.AP15 = window.AP15 || {};
     var box = $('.ap15-email-status');
     var c = state.cert, r = state.result;
     btn.disabled = true;
+    if (AP15.config.backend.enabled) box.innerHTML = '<div class="ap15-note"><span class="ap15-spinner"></span> Oklevél küldése ide: <b>' + esc(c.email) + '</b>…</div>';
     var payload = {
       certId: c.id, issuedAt: c.issuedAt, pack: AP15.pack.id, name: c.name, nameMode: c.nameMode, email: c.email,
       score: r.score, max: r.max, level: r.level.title,
@@ -740,7 +762,9 @@ window.AP15 = window.AP15 || {};
             '<p class="ap15-note">Élesítéshez kapcsold be a háttérrendszert a config.js fájlban (backend.enabled), és állítsd be az api/send-certificate.php végpontot.</p>' +
           '</div>';
       } else if (res.ok) {
-        box.innerHTML = '<div class="ap15-ok-box">✓ Elküldtük az oklevelet ide: <b>' + esc(c.email) + '</b></div>';
+        c.mailed = true;
+        btn.innerHTML = '✉ Újraküldés e-mailben';
+        box.innerHTML = '<div class="ap15-ok-box">✓ Elküldtük az oklevelet ide: <b>' + esc(c.email) + '</b> (nézd meg a Promóciók/Spam mappát is)</div>';
       } else {
         box.innerHTML = '<div class="ap15-err-box">Az e-mail küldése most nem sikerült' + (res.message ? ': ' + esc(res.message) : '') + '. A PDF-et letöltheted a fenti gombbal.</div>';
       }
