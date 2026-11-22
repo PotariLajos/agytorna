@@ -22,9 +22,9 @@ Majd: <http://localhost:8000>. (Közvetlenül fájlként – `file://` – is me
 | `index.html` | Önálló oldal, csak egy `<div id="agytorna">` + a modulok betöltése |
 | `assets/js/config.js` | **Beállítások**: Skool-link, háttérrendszer ki/be, hozzájárulási szöveg és verzió |
 | `assets/js/engine.js` | Motor: témacsomagok, kérdéshúzás, válaszkeverés, pontozás, értékelés |
-| `assets/js/packs/agytorna.js` | **Gondolkodási próba**: 90 kérdés megoldókulccsal és indoklással, kategóriák, szintek, szövegek |
-| `assets/js/packs/ai.js` | **AI-próba**: 45 kérdés (havonta átnézendő) |
-| `assets/js/packs/szabaduszo.js` | **Szabadúszó-próba**: 45 kérdés (félévente átnézendő) |
+| `assets/js/packs/agytorna.js` | **Gondolkodási próba**: 120 kérdés megoldókulccsal és indoklással, kategóriák, szintek, szövegek |
+| `assets/js/packs/ai.js` | **AI-próba**: 90 kérdés (havonta átnézendő) |
+| `assets/js/packs/szabaduszo.js` | **Szabadúszó-próba**: 90 kérdés (félévente átnézendő) |
 | `assets/js/storage.js` | Naplózás (demó: localStorage) és a háttérrendszer hívása |
 | `assets/js/pdf.js` | Függőség nélküli PDF-író (JPEG → A4 fekvő PDF) |
 | `assets/js/graphics.js` | Oklevél és eredménykártya rajzolása (canvas) |
@@ -59,9 +59,9 @@ Egy konkrét téma közvetlenül is indítható: `?pack=ai`, beágyazásnál `da
 
 ## Variációk és új témák
 
-- A teszt 15 **kérdéshelyből** áll (5 kategória × 3 nehézségi szint), helyenként **6 egyenértékű kérdéssel**.
+- A teszt 15 **kérdéshelyből** áll (5 kategória × 3 nehézségi szint), helyenként **6–8 egyenértékű kérdéssel**.
   Minden kitöltés helyenként egyet húz, és a válaszok sorrendjét is összekeveri.
-- Ugyanabban a böngészőben a látogató 6 kitöltésen át nem kap ismétlődő kérdést; utána a kérdések
+- Ugyanabban a böngészőben a látogató 6–8 kitöltésen át nem kap ismétlődő kérdést; utána a kérdések
   újrakeverednek („Minden kérdést láttál már!” üzenettel).
 - A nehézség és a pontozás minden kitöltésnél azonos, így az eredmények összevethetők.
 - **Új téma** (pl. AI-tudás): másold le a `packs/agytorna.js`-t új néven, írd át az `id`-t és a tartalmat,
@@ -127,7 +127,7 @@ Bármely oldalra (WordPress „Egyéni HTML” blokk, Elementor HTML widget, sim
 
 ## WordPress
 
-A tároló egyben **éles WordPress-bővítmény (1.1.0)**: `wp-content/plugins/agytorna` (a zipből a `.git`, `tools/`, `api/` elhagyható), majd bármely oldalra `[agytorna]`.
+A tároló egyben **éles WordPress-bővítmény (1.2.0)**: `wp-content/plugins/agytorna` (a zipből a `.git`, `tools/`, `api/` elhagyható), majd bármely oldalra `[agytorna]`.
 
 WordPressben a bővítmény automatikusan élesre kapcsol (nincs DEMÓ):
 

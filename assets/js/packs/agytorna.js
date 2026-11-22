@@ -2,7 +2,7 @@
  * Agytorna – „Mennyire vág az eszed?” témacsomag
  * --------------------------------------------------------------
  * 15 kérdéshely (5 kategória × 3 nehézségi szint), helyenként
- * 6 egyenértékű kérdéssel = 90 kérdés. Minden kitöltés helyenként
+ * 8 egyenértékű kérdéssel = 120 kérdés. Minden kitöltés helyenként
  * egyet húz (lásd engine.js), így a sorrend, a nehézség és a pontozás
  * mindig azonos, a konkrét kérdések viszont változnak.
  *
@@ -29,7 +29,7 @@ AP15.registerPack({
   // Tartalomfrissítés: mikor néztük át utoljára, és hány havonta esedékes.
   // A gondolkodási feladatok nem évülnek el – évente átnézés, igény szerint bővítés.
   // (Az ellenőrzéshez: node tools/review-status.js)
-  review: { lastReviewed: '2026-11-12', intervalMonths: 12 },
+  review: { lastReviewed: '2026-11-22', intervalMonths: 12 },
 
   landing: {
     titleLead: 'Mennyire',
@@ -126,7 +126,13 @@ AP15.registerPack({
         explain: 'Ha egyik barátom sem szereti a spenótot, és Lili a barátom, akkor Lili sem szereti.' },
       { id: 'L1f', text: 'Hárman állnak sorban. Ági Bence előtt áll, Bence pedig Cili előtt. Ki áll középen?',
         options: ['Ági', 'Cili', 'Bence', 'Nem lehet tudni'], correct: 2,
-        explain: 'A sorrend elölről: Ági, Bence, Cili – Bence áll középen.' }
+        explain: 'A sorrend elölről: Ági, Bence, Cili – Bence áll középen.' },
+      { id: "L1g", text: "Tamás magasabb Évánál, de alacsonyabb Gábornál. Ki a legmagasabb?",
+        options: ["Gábor", "Tamás", "Éva", "Nem lehet eldönteni"], correct: 0,
+        explain: "Sorrend: Gábor > Tamás > Éva, tehát Gábor a legmagasabb." },
+      { id: "L1h", text: "Ha egy szám páros, akkor osztható 2-vel. A 14 páros. Melyik állítás biztosan igaz?",
+        options: ["A 14 osztható 2-vel", "A 14 osztható 3-mal", "A 14 páratlan", "Ebből semmi nem következik"], correct: 0,
+        explain: "A szabály és a feltétel együtt adja: a 14 páros, tehát osztható 2-vel." }
     ]},
 
     { id: 'P1', category: 'pattern', level: 1, questions: [
@@ -147,7 +153,13 @@ AP15.registerPack({
         explain: 'Minden lépésben 3-mal csökken a szám: 11 − 3 = 8.' },
       { id: 'P1f', text: 'Melyik időpont következik?', visual: '1:00  →  1:15  →  1:30  →  1:45  →  ?',
         options: ['1:50', '2:00', '1:55', '2:15'], correct: 1,
-        explain: 'Az időpontok negyedóránként követik egymást: 1:45 után 2:00 jön.' }
+        explain: 'Az időpontok negyedóránként követik egymást: 1:45 után 2:00 jön.' },
+      { id: "P1g", text: "Melyik szám következik?", visual: "5,  10,  15,  20,  ?",
+        options: ["25", "30", "24", "21"], correct: 0,
+        explain: "Minden lépésben 5-tel nő: 5, 10, 15, 20, 25." },
+      { id: "P1h", text: "Melyik betű következik?", visual: "A,  C,  E,  G,  ?",
+        options: ["I", "H", "J", "K"], correct: 0,
+        explain: "Minden második betű jön az ábécéből: A (B) C (D) E (F) G (H) I." }
     ]},
 
     { id: 'S1', category: 'problem', level: 1, questions: [
@@ -168,7 +180,13 @@ AP15.registerPack({
         explain: '240 : 30 = 8 nap.' },
       { id: 'S1f', text: 'Egy recept 4 főre 300 g lisztet ír. Mennyi liszt kell ugyanebből 6 főre?',
         options: ['400 g', '450 g', '500 g', '600 g'], correct: 1,
-        explain: 'Egy főre 300 : 4 = 75 g jut, 6 főre 6 × 75 = 450 g.' }
+        explain: 'Egy főre 300 : 4 = 75 g jut, 6 főre 6 × 75 = 450 g.' },
+      { id: "S1g", text: "Egy dobozban 10 tojás van. Hány tojás van 4 dobozban?",
+        options: ["40", "14", "30", "44"], correct: 0,
+        explain: "4 × 10 = 40 tojás." },
+      { id: "S1h", text: "Egy film 1 óra 45 percig tart, és 19:30-kor kezdődik. Mikor ér véget?",
+        options: ["21:15", "21:05", "21:45", "20:15"], correct: 0,
+        explain: "19:30 + 1 óra = 20:30, + 45 perc = 21:15." }
     ]},
 
     { id: 'V1', category: 'verbal', level: 1, questions: [
@@ -189,7 +207,13 @@ AP15.registerPack({
         explain: 'A sebes a gyors rokon értelmű párja; a lassú éppen az ellentéte.' },
       { id: 'V1f', text: 'Egészítsd ki az analógiát! Tehén : bőg = kacsa : ?',
         options: ['csipog', 'hápog', 'ugat', 'nyerít'], correct: 1,
-        explain: 'Az állatok hangjáról van szó: a tehén bőg, a kacsa hápog. (A csibe csipog, a kutya ugat, a ló nyerít.)' }
+        explain: 'Az állatok hangjáról van szó: a tehén bőg, a kacsa hápog. (A csibe csipog, a kutya ugat, a ló nyerít.)' },
+      { id: "V1g", text: "Melyik szó NEM illik a többi közé?", visual: "alma  ·  körte  ·  szilva  ·  répa",
+        options: ["répa", "alma", "körte", "szilva"], correct: 0,
+        explain: "Az alma, a körte és a szilva gyümölcs, a répa zöldség." },
+      { id: "V1h", text: "Melyik szó jelentése ELLENTÉTES a „nyitott” szóéval?",
+        options: ["zárt", "tágas", "világos", "szabad"], correct: 0,
+        explain: "A „nyitott” ellentéte a „zárt”." }
     ]},
 
     { id: 'F1', category: 'attention', level: 1, questions: [
@@ -210,7 +234,13 @@ AP15.registerPack({
         explain: 'Helyesen „bizonyítvány”, hosszú í-vel. A többi szó helyesen van írva.' },
       { id: 'F1f', text: 'Ma szerda van. Milyen nap lesz holnapután?',
         options: ['csütörtök', 'péntek', 'szombat', 'kedd'], correct: 1,
-        explain: 'Holnap csütörtök, holnapután péntek.' }
+        explain: 'Holnap csütörtök, holnapután péntek.' },
+      { id: "F1g", text: "Hány „E” betű van ebben a szóban?", visual: "ELEFÁNTCSONT",
+        options: ["2", "1", "3", "4"], correct: 0,
+        explain: "E-L-E-F-Á-N-T-C-S-O-N-T: az első és a harmadik betű „E”, összesen 2." },
+      { id: "F1h", text: "Melyik szám a legnagyobb?", visual: "689   ·   698   ·   869   ·   896",
+        options: ["896", "869", "698", "689"], correct: 0,
+        explain: "Mind ugyanabból a három számjegyből áll; a legnagyobb a 8-cal kezdődők közül az, amelyiknek a második jegye nagyobb: 896." }
     ]},
 
     /* ---------------- 2. KÖR – BELEJÖVÜNK ---------------- */
@@ -233,7 +263,13 @@ AP15.registerPack({
         explain: 'Minden zorg a flipek közé tartozik, a flipek között pedig nincs kék – így zorg sem lehet kék. (A kitalált szavak miatt csak a logikára hagyatkozhatsz.)' },
       { id: 'L2f', text: 'Egy fiókban 6 fekete és 6 fehér zokni van összekeverve. Sötétben húzol. Legalább hány zoknit kell kihúznod, hogy biztosan legyen köztük két azonos színű?',
         options: ['2', '3', '6', '7'], correct: 1,
-        explain: 'Két húzásnál még lehet egy fekete és egy fehér. A harmadik zokni viszont biztosan egyezik valamelyikkel – csak két szín van.' }
+        explain: 'Két húzásnál még lehet egy fekete és egy fehér. A harmadik zokni viszont biztosan egyezik valamelyikkel – csak két szín van.' },
+      { id: "L2g", text: "Ma kedd van. Milyen nap lesz 10 nap múlva?",
+        options: ["péntek", "csütörtök", "szombat", "szerda"], correct: 0,
+        explain: "7 nap múlva újra kedd lesz, onnan még 3 nap: szerda, csütörtök, péntek." },
+      { id: "L2h", text: "Ádám idősebb Bélánál, Cecil fiatalabb Bélánál. Ki a középső a három testvér közül?",
+        options: ["Béla", "Ádám", "Cecil", "Nem lehet eldönteni"], correct: 0,
+        explain: "Sorrend életkor szerint: Ádám > Béla > Cecil, így Béla a középső." }
     ]},
 
     { id: 'P2', category: 'pattern', level: 2, questions: [
@@ -254,7 +290,13 @@ AP15.registerPack({
         explain: 'Minden szám az előző fele: 25 : 2 = 12,5.' },
       { id: 'P2f', text: 'Melyik szám következik?', visual: '1,  10,  2,  20,  3,  30,  ?',
         options: ['40', '4', '31', '33'], correct: 1,
-        explain: 'Két sor fonódik össze: 1, 2, 3, … és 10, 20, 30, … A 30 után az első sor folytatódik: 4.' }
+        explain: 'Két sor fonódik össze: 1, 2, 3, … és 10, 20, 30, … A 30 után az első sor folytatódik: 4.' },
+      { id: "P2g", text: "Melyik szám következik?", visual: "2,  6,  18,  54,  ?",
+        options: ["162", "108", "72", "216"], correct: 0,
+        explain: "Minden szám az előző háromszorosa: 54 × 3 = 162." },
+      { id: "P2h", text: "Melyik szám következik?", visual: "1,  1,  2,  3,  5,  8,  ?",
+        options: ["13", "11", "12", "16"], correct: 0,
+        explain: "Minden szám az előző kettő összege (Fibonacci-sorozat): 5 + 8 = 13." }
     ]},
 
     { id: 'S2', category: 'problem', level: 2, questions: [
@@ -275,7 +317,13 @@ AP15.registerPack({
         explain: '210 : 90 = 2⅓ óra, egy harmad óra pedig 20 perc. Tehát 2 óra 20 perc.' },
       { id: 'S2f', text: 'Egy 3 × 4 méteres szoba padlóját 50 × 50 cm-es csempékkel burkoljuk. Hány csempe kell?',
         options: ['24', '48', '96', '12'], correct: 1,
-        explain: 'Egy méterre 2 csempe fér, így a szoba 6 × 8 = 48 csempével fedhető le. (Terület szerint: 12 m² : 0,25 m² = 48.)' }
+        explain: 'Egy méterre 2 csempe fér, így a szoba 6 × 8 = 48 csempével fedhető le. (Terület szerint: 12 m² : 0,25 m² = 48.)' },
+      { id: "S2g", text: "Egy 5000 Ft-os termék árát előbb 10%-kal emelik, majd az új árat 10%-kal csökkentik. Mennyi a végső ár?",
+        options: ["4950 Ft", "5000 Ft", "5050 Ft", "4500 Ft"], correct: 0,
+        explain: "5000 × 1,1 = 5500 Ft, majd 5500 × 0,9 = 4950 Ft. A csökkentés a nagyobb összegből számolódik, ezért nem jön vissza az eredeti ár." },
+      { id: "S2h", text: "Három festő 6 nap alatt fest ki egy házat. Ugyanilyen tempóban hány nap alatt végezne 6 festő?",
+        options: ["3 nap", "12 nap", "6 nap", "2 nap"], correct: 0,
+        explain: "Kétszer annyi festő fele annyi idő alatt végez: 6 ÷ 2 = 3 nap." }
     ]},
 
     { id: 'V2', category: 'verbal', level: 2, questions: [
@@ -296,7 +344,13 @@ AP15.registerPack({
         explain: 'A „Sok kicsi sokra megy” pontosan azt jelenti, hogy apró részekből is nagy egész lesz.' },
       { id: 'V2f', text: 'Melyik szó jelentése áll a legközelebb az „ideiglenes” szóéhoz?',
         options: ['állandó', 'átmeneti', 'időszerű', 'véletlen'], correct: 1,
-        explain: 'Az ideiglenes = átmeneti, csak egy ideig tartó. Az „időszerű” csapda: az azt jelenti, hogy aktuális.' }
+        explain: 'Az ideiglenes = átmeneti, csak egy ideig tartó. Az „időszerű” csapda: az azt jelenti, hogy aktuális.' },
+      { id: "V2g", text: "Egészítsd ki az analógiát! Kéz : kesztyű = láb : ?",
+        options: ["zokni", "térd", "sapka", "gyűrű"], correct: 0,
+        explain: "A kesztyű a kézre, a zokni a lábra húzható ruhadarab." },
+      { id: "V2h", text: "Melyik szó jelentése áll a legközelebb a „fáradhatatlan” szóéhoz?",
+        options: ["kitartó", "lusta", "álmos", "gyenge"], correct: 0,
+        explain: "Aki fáradhatatlan, az kitartóan, lankadatlanul dolgozik." }
     ]},
 
     { id: 'F2', category: 'attention', level: 2, questions: [
@@ -317,7 +371,13 @@ AP15.registerPack({
         explain: 'A „kéz” a második és a hatodik helyen is szerepel. A hasonló szavak (kés, kép) elterelik a figyelmet.' },
       { id: 'F2f', text: 'Egy sorban elölről is és hátulról is te vagy a 7. Hányan állnak a sorban?',
         options: ['13', '14', '12', '15'], correct: 0,
-        explain: 'Előtted 6-an, mögötted 6-an állnak, plusz te: 6 + 6 + 1 = 13. (A 14 csapda: úgy téged kétszer számolnánk.)' }
+        explain: 'Előtted 6-an, mögötted 6-an állnak, plusz te: 6 + 6 + 1 = 13. (A 14 csapda: úgy téged kétszer számolnánk.)' },
+      { id: "F2g", text: "Melyik szó NEM egyezik a mintával?", visual: "Minta:  KÖNYVTÁROS",
+        options: ["KÖNYTVÁROS", "KÖNYVTÁROS", "KÖNYVTÁROS", "KÖNYVTÁROS"], correct: 0,
+        explain: "Az eltérő változatban a „V” és a „T” helyet cserélt: KÖNY-TV-ÁROS." },
+      { id: "F2h", text: "Hány „SZ” betűpár van ebben a mondatban?", visual: "SZÉP SZEMŰ SZARVAS SZALAD",
+        options: ["4", "3", "5", "6"], correct: 0,
+        explain: "SZép, SZemű, SZarvas, SZalad – mind a négy szó „SZ”-szel kezdődik, és máshol nincs „SZ” bennük." }
     ]},
 
     /* ---------------- 3. KÖR – A NAGY KIHÍVÁS ---------------- */
@@ -340,7 +400,13 @@ AP15.registerPack({
         explain: 'Az A-t meg kell nézni (páros-e a hátoldala), és a 7-et is (nincs-e mögötte magánhangzó). A 4 hátoldala bármi lehet, a szabály nem tiltja – ez a gyakori csapda.' },
       { id: 'L3f', text: 'Három gyanúsított közül egyikük vitte el a sütit. Aladár: „Béla volt.” Béla: „Nem én voltam.” Csilla: „Nem én voltam.” Pontosan EGYIKÜK mond igazat. Ki vitte el a sütit?',
         options: ['Aladár', 'Béla', 'Csilla', 'Nem dönthető el'], correct: 2,
-        explain: 'Ha Aladár vagy Béla lenne a tettes, két igaz állítás lenne. Ha Csilla: Aladár hazudik, Béla igazat mond, Csilla hazudik – pontosan egy igaz állítás. Tehát Csilla.' }
+        explain: 'Ha Aladár vagy Béla lenne a tettes, két igaz állítás lenne. Ha Csilla: Aladár hazudik, Béla igazat mond, Csilla hazudik – pontosan egy igaz állítás. Tehát Csilla.' },
+      { id: "L3g", text: "Anna, Bori és Csaba különböző italt kér: kávét, teát vagy kakaót. Anna nem kér kávét. Bori teát kér. Mit kér Csaba?",
+        options: ["kávét", "teát", "kakaót", "Nem lehet eldönteni"], correct: 0,
+        explain: "Bori a teát kéri. Annának így a kávé és a kakaó maradna, de kávét nem kér, tehát kakaót kér. Csabának a kávé marad." },
+      { id: "L3h", text: "Tegyük fel, hogy igaz: „Minden macska szereti a halat.” Cirmi nem szereti a halat. Mi következik ebből biztosan?",
+        options: ["Cirmi nem macska", "Cirmi macska", "Cirmi kutya", "Ebből semmi nem következik"], correct: 0,
+        explain: "Ha minden macska szereti a halat, akkor aki nem szereti, az nem lehet macska. (Hogy kutya-e, azt nem tudjuk.)" }
     ]},
 
     { id: 'P3', category: 'pattern', level: 3, questions: [
@@ -361,7 +427,13 @@ AP15.registerPack({
         explain: 'Minden sorban az első két szám összege a harmadik: 3+5 = 8, 4+6 = 10, így 7+2 = 9. (A 14 csapda: szorzás az első két sorra nem működik.)' },
       { id: 'P3f', text: 'Melyik szám következik?', visual: '1,  3,  7,  15,  31,  ?',
         options: ['47', '62', '64', '63'], correct: 3,
-        explain: 'Minden szám az előző kétszerese + 1: 31 × 2 + 1 = 63. (A különbségek is duplázódnak: 2, 4, 8, 16, 32.)' }
+        explain: 'Minden szám az előző kétszerese + 1: 31 × 2 + 1 = 63. (A különbségek is duplázódnak: 2, 4, 8, 16, 32.)' },
+      { id: "P3g", text: "Melyik szám következik?", visual: "2,  5,  11,  23,  47,  ?",
+        options: ["95", "94", "71", "96"], correct: 0,
+        explain: "Minden szám az előző kétszerese plusz 1: 47 × 2 + 1 = 95." },
+      { id: "P3h", text: "Egy gép minden számot ugyanazzal a szabállyal alakít át. Mit ad ki a 7-re?", visual: "2 → 5      3 → 8      4 → 11      7 → ?",
+        options: ["20", "21", "17", "19"], correct: 0,
+        explain: "A szabály: háromszoros mínusz 1 (2→5, 3→8, 4→11). Így 7 × 3 − 1 = 20." }
     ]},
 
     { id: 'S3', category: 'problem', level: 3, questions: [
@@ -382,7 +454,13 @@ AP15.registerPack({
         explain: 'Mindenki 5 emberrel fog kezet: 6 × 5 = 30, de így minden kézfogást kétszer számoltunk. 30 : 2 = 15.' },
       { id: 'S3f', text: 'Egy bögrében 3 dl tea van. Megiszod a felét, visszatöltesz 1 dl-t, majd megint megiszod a felét. Mennyi tea marad a bögrében?',
         options: ['1 dl', '1,5 dl', '1,25 dl', '0,75 dl'], correct: 2,
-        explain: '3 dl → fele: 1,5 dl → +1 dl: 2,5 dl → fele: 1,25 dl.' }
+        explain: '3 dl → fele: 1,5 dl → +1 dl: 2,5 dl → fele: 1,25 dl.' },
+      { id: "S3g", text: "Egy kosár almát 3 gyerek között elosztva 2 marad, 4 gyerek között 3, 5 gyerek között 4 marad. Legalább hány alma van a kosárban?",
+        options: ["59", "29", "119", "49"], correct: 0,
+        explain: "Eggyel több alma mindhárom esetben pontosan elosztható lenne, tehát az almák száma + 1 osztható 3-mal, 4-gyel és 5-tel. A legkisebb ilyen szám a 60, így 59 alma van." },
+      { id: "S3h", text: "Egy 300 m hosszú vonat 20 m/s sebességgel halad át egy 500 m hosszú hídon. Mennyi idő alatt ér át teljesen?",
+        options: ["40 másodperc", "25 másodperc", "15 másodperc", "35 másodperc"], correct: 0,
+        explain: "A vonat elejének a híd hosszát és a saját hosszát is meg kell tennie: 500 + 300 = 800 m. 800 ÷ 20 = 40 másodperc." }
     ]},
 
     { id: 'V3', category: 'verbal', level: 3, questions: [
@@ -403,7 +481,13 @@ AP15.registerPack({
         explain: 'A magból fa fejlődik, a tojásból madár. A levél és a toll csak része valaminek, a gyökér a földben van – ezek más viszonyok.' },
       { id: 'V3f', text: 'Melyik szó NEM illik a többi közé?',
         options: ['elhalaszt', 'elodáz', 'siettet', 'halogat'], correct: 2,
-        explain: 'Az elhalaszt, az elodáz és a halogat mind azt jelenti, hogy későbbre tolunk valamit. A siettet ennek éppen az ellentéte.' }
+        explain: 'Az elhalaszt, az elodáz és a halogat mind azt jelenti, hogy későbbre tolunk valamit. A siettet ennek éppen az ellentéte.' },
+      { id: "V3g", text: "Melyik szó illik MINDKÉT üres helyre, hogy két értelmes összetett szót kapjunk?", visual: "ABLAK ____     ____ TÁBLA",
+        options: ["üveg", "keret", "párkány", "fa"], correct: 0,
+        explain: "Ablaküveg és üvegtábla – mindkettő értelmes szó. Az ablakkeret és az ablakpárkány létezik, de a „kerettábla” és a „párkánytábla” nem; a „fatábla” igen, de az „ablakfa” nem." },
+      { id: "V3h", text: "Melyik szó illik MINDKÉT üres helyre, hogy két értelmes összetett szót kapjunk?", visual: "NAP ____     ____ KÉP",
+        options: ["fény", "sugár", "óra", "szemüveg"], correct: 0,
+        explain: "Napfény és fénykép – mindkettő értelmes. A napsugár, a napóra és a napszemüveg is létezik, de a „sugárkép”, az „órakép” és a „szemüvegkép” nem." }
     ]},
 
     { id: 'F3', category: 'attention', level: 3, questions: [
@@ -424,7 +508,13 @@ AP15.registerPack({
         explain: 'A kérdés az, hogy neked mennyi van: a kettőt, amit elvettél, most te tartod. (Az 1 az asztalon maradt alma.)' },
       { id: 'F3f', text: 'Egy kikötött hajó oldalán kötéllétra lóg. A legalsó foka éppen a vízfelszínen van, a fokok 30 cm-re vannak egymástól. A dagály óránként 15 cm-rel emeli a vízszintet. Hány fok lesz víz alatt 4 óra múlva?',
         options: ['2', '0', '4', '1'], correct: 1,
-        explain: 'A hajó a vízzel együtt emelkedik, a létrával együtt. Így egyetlen fok sem kerül víz alá – a számolás itt csak elterelés.' }
+        explain: 'A hajó a vízzel együtt emelkedik, a létrával együtt. Így egyetlen fok sem kerül víz alá – a számolás itt csak elterelés.' },
+      { id: "F3g", text: "Egy elektromos vonat északra halad, a szél nyugatról fúj. Merre száll a vonat füstje?",
+        options: ["Sehova – az elektromos vonatnak nincs füstje", "Kelet felé", "Dél felé", "Nyugat felé"], correct: 0,
+        explain: "Csapda: az elektromos vonat nem füstöl, így a füst iránya értelmetlen kérdés." },
+      { id: "F3h", text: "Egy futóversenyen megelőzöd az utolsó futót. Hányadik leszel?",
+        options: ["Ez lehetetlen – az utolsó futó mögött nem állhat senki, így őt nem lehet megelőzni", "Utolsó előtti", "Utolsó", "Második"], correct: 0,
+        explain: "Ahhoz, hogy valakit megelőzz, mögötte kell lenned – az utolsó mögött viszont senki nincs." }
     ]}
   ]
 });

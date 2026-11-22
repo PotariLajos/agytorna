@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Agytorna – Interaktív gondolkodási kihívás
  * Description: 15 kérdéses, játékos gondolkodási teszt eredményoldallal, PDF-oklevéllel (e-mailben is), megosztható eredménykártyával és Skool-ajánlattal. Használat: [agytorna] shortcode. Beállítások: Eszközök → Agytorna.
- * Version:     1.1.1
+ * Version:     1.2.0
  * Requires PHP: 7.4
  * Text Domain: agytorna
  */
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('AP15_VERSION', '1.1.1');
+define('AP15_VERSION', '1.2.0');
 define('AP15_DB_VERSION', '1');
 define('AP15_DEFAULT_SKOOL', 'https://www.skool.com/szabaduszo-affiliate/about?ref=47fda19cfe6e4a4cbdfea472011ceff2');
 define('AP15_CERT_RETENTION_MONTHS', 24); // oklevél-rekordok megőrzése (hitelesség-ellenőrzéshez)
@@ -343,7 +343,7 @@ function ap15_rest_certificate(WP_REST_Request $req) {
     $body    = "Kedves {$name}!\n\n"
              . "Gratulálunk, sikeresen teljesítetted a kihívást {$score}/{$max} ponttal ({$level}).\n"
              . "Csatoltan küldjük személyre szóló okleveledet (azonosító: {$certId}).\n\n"
-             . "Következő lépés – ha szeretnél tovább fejlődni:\n{$skool}\n"
+             . "Következő lépés – ha szeretnél tovább fejlődni, csatlakozz a tanuló közösséghez:\n{$skool}\n"
              . "(Ajánlói link: csatlakozás esetén jutalékot kaphatok, neked ez nem kerül többe.)\n\n"
              . "Üdvözlettel:\n{$site}\n" . home_url('/') . "\n\n"
              . "A teszt saját fejlesztésű, játékos képességfelmérő – nem minősül hiteles IQ-mérésnek.\n"

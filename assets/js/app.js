@@ -79,9 +79,9 @@ window.AP15 = window.AP15 || {};
     return '<aside class="ap15-skool' + (compact ? ' ap15-skool--compact' : '') + '">' +
       '<div class="ap15-skool-glow" aria-hidden="true"></div>' +
       '<span class="ap15-skool-kicker">Következő lépés' + (compact ? '' : ' – ha szeretnéd') + '</span>' +
-      '<h2>' + (compact ? 'Ügyes voltál! Fejlődj tovább a közösségben' : 'Szeretnél tovább fejlődni?') + '</h2>' +
+      '<h2>' + (compact ? 'Ügyes voltál! Fejlődj tovább a tanuló közösségben' : 'Szeretnél tovább fejlődni?') + '</h2>' +
       '<p>Fedezd fel a digitális világ, az AI és az online tanulás lehetőségeit egy támogató közösségben!</p>' +
-      '<a class="ap15-btn ap15-btn--cta" href="' + esc(AP15.config.skoolUrl) + '" target="_blank" rel="noopener noreferrer" data-action="skool">MEGNÉZEM A SKOOL KÖZÖSSÉGET <span aria-hidden="true">↗</span></a>' +
+      '<a class="ap15-btn ap15-btn--cta" href="' + esc(AP15.config.skoolUrl) + '" target="_blank" rel="noopener noreferrer" data-action="skool">MEGNÉZEM A TANULÓ KÖZÖSSÉGET <span aria-hidden="true">↗</span></a>' +
       (AP15.config.skoolUrlIsPlaceholder ? '<p class="ap15-skool-note"><span class="ap15-tag">helykitöltő link</span> A végleges Skool-cím a config.js fájlban állítható be.</p>' :
         (AP15.config.skoolDisclosure ? '<p class="ap15-skool-note">' + esc(AP15.config.skoolDisclosure) + '</p>' : '')) +
     '</aside>';
@@ -473,14 +473,14 @@ window.AP15 = window.AP15 || {};
           '</div>' +
         '</div>' +
 
+        skoolBox(true) +
+
         '<div class="ap15-card ap15-cert-cta">' +
           '<div class="ap15-cert-cta-ico" aria-hidden="true">📜</div>' +
           '<div><h2 class="ap15-h2">Kérd a digitális okleveledet!</h2>' +
           '<p class="ap15-p">Elegáns, személyre szóló PDF-oklevél a pontszámoddal, teljesítményszinteddel és egyedi azonosítóval – azonnal letölthető.</p></div>' +
           '<button class="ap15-btn ap15-btn--cta" data-action="to-form">OKLEVELET KÉREK <span aria-hidden="true">→</span></button>' +
         '</div>' +
-
-        skoolBox(true) +
 
         '<details class="ap15-card ap15-review"><summary><span>Válaszaid áttekintése és a megoldások</span><span class="ap15-review-count">' + r.score + ' helyes / ' + (r.max - r.score) + ' hibás</span></summary>' +
           '<ol class="ap15-review-list">' + review + '</ol></details>' +
@@ -689,6 +689,8 @@ window.AP15 = window.AP15 || {};
         '<p class="ap15-congrats-kicker">✨ Elkészült</p>' +
         '<h1 class="ap15-h1 ap15-center" tabindex="-1" data-autofocus>Itt az okleveled, ' + esc(c.name) + '!</h1>' +
 
+        skoolBox(false) +
+
         '<div class="ap15-cert-preview"><img src="' + state.certPreview + '" alt="Oklevél ' + esc(c.name) + ' részére: ' + r.score + '/' + r.max + ' pont, ' + esc(r.level.title) + '"></div>' +
         '<div class="ap15-actions">' +
           '<button class="ap15-btn ap15-btn--cta" data-action="download-pdf">⬇ PDF LETÖLTÉSE</button>' +
@@ -696,8 +698,6 @@ window.AP15 = window.AP15 || {};
         '</div>' +
         '<p class="ap15-meta ap15-center">Azonosító: <b>' + esc(c.id) + '</b> · PDF, A4 fekvő · ' + kb + ' KB</p>' +
         '<div class="ap15-email-status" aria-live="polite"></div>' +
-
-        skoolBox(false) +
 
         '<div class="ap15-card ap15-share">' +
           '<div class="ap15-share-img"><img src="' + state.sharePreview + '" alt="Megosztható eredménykártya"></div>' +
